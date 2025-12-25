@@ -19,7 +19,7 @@ public class Department
         Identifier identifier,
         Path path,
         Depth depth,
-        Guid parentId,
+        Department parent,
         bool isActive,
         IEnumerable<DepartmentLocation> departmentLocations)
     {
@@ -28,7 +28,7 @@ public class Department
         Identifier = identifier;
         Path = path;
         Depth = depth;
-        ParentId = parentId;
+        Parent = parent;
         IsActive = isActive;
         _departmentLocations = departmentLocations.ToList();
         CreatedAt = DateTime.UtcNow;
@@ -41,8 +41,10 @@ public class Department
 
     public Identifier Identifier { get; private set; }
 
-    //Возможно нужно будет создать ValueObject, где будет производиться проверка на родителя
-    public Guid ParentId { get; private set; }
+    //Возможно, нужно будет создать ValueObject, где будет производиться проверка на родителя
+    public Department? Parent { get; private set; }
+    
+    public DepartmentId? ParentId { get; private set; }
 
     public Path Path { get; private set; }
 
@@ -63,7 +65,7 @@ public class Department
     public static Result<Department, Error> Create(DepartmentId departmentId,
         Name name,
         Identifier identifier,
-        Guid parentId,
+        Department parent,
         bool isActive,
         IEnumerable<DepartmentLocation> departmentLocations)
     {
@@ -80,7 +82,7 @@ public class Department
             identifier,
             pathResult.Value,
             depth.Value,
-            parentId,
+            parent,
             isActive,
             departmentLocations);
     }

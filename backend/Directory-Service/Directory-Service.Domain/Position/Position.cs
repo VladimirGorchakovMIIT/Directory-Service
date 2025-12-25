@@ -6,7 +6,7 @@ namespace Directory_Service.Domain.Position;
 
 public class Position
 {
-    private readonly List<DepartmentPosition> _positions = [];
+    private readonly List<DepartmentPosition> _departmentPosition = [];
     
     private Position()
     {
@@ -20,7 +20,7 @@ public class Position
         IsActive = isActive;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
-        _positions = positions.ToList();
+        _departmentPosition = positions.ToList();
     }
 
     public PositionId Id { get; private set; }
@@ -35,7 +35,7 @@ public class Position
 
     public DateTime UpdatedAt { get; private set; }
     
-    public IReadOnlyList<DepartmentPosition> Positions => _positions;
+    public IReadOnlyList<DepartmentPosition> DepartmentPosition => _departmentPosition;
 
     public static Position Create(PositionId id, Name name, Description description, bool isActive, IEnumerable<DepartmentPosition> positions) =>
         new Position(id, name, description, isActive, positions);
