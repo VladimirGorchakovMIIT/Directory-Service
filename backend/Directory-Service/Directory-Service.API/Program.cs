@@ -1,12 +1,16 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(option => option.SwaggerEndpoint("/swagger/v1/swagger.json", "Directory Service"));
 }
 
+app.MapControllers();
 app.Run();

@@ -1,0 +1,25 @@
+using System.Text;
+using CSharpFunctionalExtensions;
+using Directory_Service.Shared;
+
+namespace Directory_Service.Domain.Location;
+
+public record Timezone(string Value)
+{
+    private const string SEPARATOR = "/";
+    
+    public static Result<Timezone, Error> Create(string continent, string city)
+    {
+        if(string.IsNullOrWhiteSpace(continent))
+            return Error.Validation("continent.error", "Continent is not valid");
+        
+        if(string.IsNullOrWhiteSpace(city))
+            return Error.Validation("city.error", "City is not valid");
+
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append(continent).Append(SEPARATOR).Append(city);
+        
+        return new Timezone(stringBuilder.ToString());
+    }
+}

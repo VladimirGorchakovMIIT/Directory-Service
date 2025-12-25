@@ -2,13 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <RootNamespace>Directory_Service.Infrastructure</RootNamespace>
+        <RootNamespace>Directory_Service.Shared</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Directory-Service.Application\Directory-Service.Application.csproj" />
-    </ItemGroup>
 
 </Project>
