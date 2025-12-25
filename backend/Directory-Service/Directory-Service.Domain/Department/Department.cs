@@ -21,9 +21,7 @@ public class Department
         Depth depth,
         Guid parentId,
         bool isActive,
-        IEnumerable<Department> departments,
-        IEnumerable<DepartmentLocation> departmentLocations,
-        IEnumerable<DepartmentPosition> departmentPositions)
+        IEnumerable<DepartmentLocation> departmentLocations)
     {
         Id = departmentId;
         Name = name;
@@ -32,9 +30,7 @@ public class Department
         Depth = depth;
         ParentId = parentId;
         IsActive = isActive;
-        _departments = departments.ToList();
         _departmentLocations = departmentLocations.ToList();
-        _departmentPositions = departmentPositions.ToList();
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
@@ -69,9 +65,7 @@ public class Department
         Identifier identifier,
         Guid parentId,
         bool isActive,
-        IEnumerable<Department> departments,
-        IEnumerable<DepartmentLocation> departmentLocations,
-        IEnumerable<DepartmentPosition> departmentPositions)
+        IEnumerable<DepartmentLocation> departmentLocations)
     {
         var pathResult = Path.Create(identifier.Value);
         if (pathResult.IsFailure)
@@ -88,8 +82,6 @@ public class Department
             depth.Value,
             parentId,
             isActive,
-            departments,
-            departmentLocations,
-            departmentPositions);
+            departmentLocations);
     }
 }
