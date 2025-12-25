@@ -7,7 +7,7 @@ namespace Directory_Service.Domain.Department;
 public class Department
 {
     private readonly List<Department> _departments = [];
-    private readonly List<Position.Position> _positions = [];
+    private readonly List<DepartmentPosition> _departmentPositions = [];
     private readonly List<DepartmentLocation> _departmentLocations = [];
 
     private Department()
@@ -23,7 +23,7 @@ public class Department
         bool isActive,
         IEnumerable<Department> departments,
         IEnumerable<DepartmentLocation> departmentLocations,
-        IEnumerable<Position.Position> positions)
+        IEnumerable<DepartmentPosition> departmentPositions)
     {
         Id = departmentId;
         Name = name;
@@ -34,7 +34,7 @@ public class Department
         IsActive = isActive;
         _departments = departments.ToList();
         _departmentLocations = departmentLocations.ToList();
-        _positions = positions.ToList();
+        _departmentPositions = departmentPositions.ToList();
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
@@ -59,8 +59,10 @@ public class Department
     public DateTime UpdatedAt { get; private set; }
 
     public IReadOnlyList<Department> DepartmentsChild => _departments;
-    
-    public IReadOnlyList<Position.Position> Positions => _positions;
+
+    public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
+
+    public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
 
     public static Result<Department, Error> Create(DepartmentId departmentId,
         Name name,
@@ -69,7 +71,7 @@ public class Department
         bool isActive,
         IEnumerable<Department> departments,
         IEnumerable<DepartmentLocation> departmentLocations,
-        IEnumerable<Position.Position> positions)
+        IEnumerable<DepartmentPosition> departmentPositions)
     {
         var pathResult = Path.Create(identifier.Value);
         if (pathResult.IsFailure)
@@ -78,7 +80,16 @@ public class Department
         var depth = Depth.Create(identifier.Value);
         if (depth.IsFailure)
             return depth.Error;
-        
-        return new Department(departmentId, name, identifier, pathResult.Value, depth.Value, parentId, isActive, departments, departmentLocations, positions);
+
+        return new Department(departmentId,
+            name,
+            identifier,
+            pathResult.Value,
+            depth.Value,
+            parentId,
+            isActive,
+            departments,
+            departmentLocations,
+            departmentPositions);
     }
 }
