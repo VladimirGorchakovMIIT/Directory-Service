@@ -7,4 +7,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Directory-Service.Contracts\Directory-Service.Contracts.csproj" />
+      <ProjectReference Include="..\Directory-Service.Domain\Directory-Service.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
