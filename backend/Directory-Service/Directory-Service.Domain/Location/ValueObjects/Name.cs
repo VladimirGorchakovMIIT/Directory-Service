@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
 using Directory_Service.Shared;
 
-namespace Directory_Service.Domain.Location;
+namespace Directory_Service.Domain.Location.ValueObjects;
 
 public record Name(string Value)
 {

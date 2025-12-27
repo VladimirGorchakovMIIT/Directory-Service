@@ -1,4 +1,6 @@
-﻿namespace Directory_Service.Domain.Department;
+﻿using Directory_Service.Domain.Department.ValueObjects;
+
+namespace Directory_Service.Domain.Department;
 
 public class DepartmentLocation
 {

@@ -1,4 +1,6 @@
+using Directory_Service.Application.DependencyInjection;
 using Directory_Service.Infrastructure;
+using Directory_Service.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ApplicationDbContext>(_ => new ApplicationDbContext(builder.Configuration));
+
+builder.Services.AddInfrastructureService();
+builder.Services.AddApplicationService();
 
 var app = builder.Build();
 

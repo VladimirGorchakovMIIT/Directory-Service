@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Domain.Department.ValueObjects;
 using Directory_Service.Shared;
+using Path = Directory_Service.Domain.Department.ValueObjects.Path;
 
 namespace Directory_Service.Domain.Department;
 

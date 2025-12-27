@@ -1,4 +1,5 @@
 ﻿using Directory_Service.Domain.Location;
+using Directory_Service.Domain.Location.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -2,7 +2,7 @@
 using Directory_Service.Domain.Department.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Path = Directory_Service.Domain.Department.Path;
+using Path = Directory_Service.Domain.Department.ValueObjects.Path;
 
 namespace Directory_Service.Infrastructure.Configurations;
 
