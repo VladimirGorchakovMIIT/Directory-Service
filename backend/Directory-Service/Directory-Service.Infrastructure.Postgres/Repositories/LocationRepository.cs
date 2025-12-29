@@ -1,5 +1,7 @@
-﻿using Directory_Service.Application.Location;
+﻿using CSharpFunctionalExtensions;
+using Directory_Service.Application.Location;
 using Directory_Service.Domain.Location;
+using Directory_Service.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace Directory_Service.Infrastructure.Repositories;
@@ -15,10 +17,18 @@ public class LocationRepository : ILocationRepository
         _logger = logger;
     }
 
-    public async Task<Guid> CreateAsync(Location location, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Error>> CreateAsync(Location location, CancellationToken cancellationToken)
     {
-        await _dbContext.Locations.AddAsync(location, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.Locations.AddAsync(location, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failure to insert location");
+            Error.Failure("location.insert", "Failed to insert location");
+        }
         
         return location.Id.Value;
     }
