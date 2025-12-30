@@ -10,7 +10,7 @@ public record Name(string Value)
     public static Result<Name, Error> Create(string name)
     {
         if(string.IsNullOrWhiteSpace(name) || name.Length > MAX_LENGHT_150)
-            return Error.Validation("not.name.validation", "This name is too long or empty");
+            return GeneralErrors.Validation("not.name.validation", "This name is too long or empty");
 
         return new Name(name);
     }

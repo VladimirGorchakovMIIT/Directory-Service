@@ -11,10 +11,10 @@ public record Timezone(string Value)
     public static Result<Timezone, Error> Create(string continent, string city)
     {
         if(string.IsNullOrWhiteSpace(continent))
-            return Error.Validation("continent.error", "Continent is not valid");
+            return GeneralErrors.Validation("continent.error", "Continent is not valid");
         
         if(string.IsNullOrWhiteSpace(city))
-            return Error.Validation("city.error", "City is not valid");
+            return GeneralErrors.Validation("city.error", "City is not valid");
 
         var stringBuilder = new StringBuilder();
         

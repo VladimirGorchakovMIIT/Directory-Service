@@ -16,6 +16,6 @@ public class Errors : IEnumerable<Error>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public static implicit operator Errors(Error[] errors) => new(errors);
-
+    
     public static implicit operator Errors(Error error) => new([error]);
 }

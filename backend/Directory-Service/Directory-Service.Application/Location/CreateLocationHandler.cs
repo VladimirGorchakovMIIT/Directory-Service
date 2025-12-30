@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Directory_Service.Application.Extensions;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Shared;
 using Directory_Service.Domain.Location.ValueObjects;
@@ -21,27 +22,28 @@ public class CreateLocationHandler
         _validator = validator;
     }
 
-    public async Task<Result<Guid, Error>> Handle(CreateLocationRequest request, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Errors>> Handle(CreateLocationRequest request, CancellationToken cancellationToken)
     {
-        //TODO необходимо будет добавить Fluent Validation для проверки входных данных
-
         var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return validationResult.ToErrors();
         
         var locationId = Guid.NewGuid();
         
         var nameResult = Name.Create(request.Name);
         if(nameResult.IsFailure)
-            return nameResult.Error;
+            return nameResult.Error.ToErrors();
         
         var addReq = request.Address;
         var addressResult = Address.Create(addReq.Street, addReq.City, addReq.Building, addReq.Flat);
         if(addressResult.IsFailure)
-            return addressResult.Error;
+            return addressResult.Error.ToErrors();
         
         var timezoneRequest = request.Timezone;
         var timezoneResult = Timezone.Create(timezoneRequest.Continent, timezoneRequest.City);
         if(timezoneResult.IsFailure)
-            return timezoneResult.Error;
+            return timezoneResult.Error.ToErrors();
         
         var location = DomainLocation.Create(new LocationId(locationId), nameResult.Value, addressResult.Value, timezoneResult.Value, false, []);
         
