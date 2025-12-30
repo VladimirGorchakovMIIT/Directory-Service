@@ -8,13 +8,13 @@ public record Address(string Street, string City, int Building, int Flat)
     public static Result<Address, Error> Create(string street, string city, int building, int flat)
     {
         if(string.IsNullOrWhiteSpace(street))
-            return GeneralErrors.Validation("street.validation", "Street is not valid");
+            return Error.ValueIsInvalid("street.validation", "Street is not valid", "street");
         
         if(string.IsNullOrWhiteSpace(city))
-            return GeneralErrors.Validation("city.validation", "City is not valid");
+            return Error.ValueIsInvalid("city.validation", "City is not valid", "city");
         
         if(building <= 0 || flat <= 0)
-            return GeneralErrors.Validation("building.or.flat.validation", " or flat is not validation");
+            return Error.ValueIsInvalid("building.or.flat.validation", " or flat is not validation", "building");
         
         return new Address(street, city, building, flat);
     }

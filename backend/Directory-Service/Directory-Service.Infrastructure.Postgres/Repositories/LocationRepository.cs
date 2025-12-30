@@ -27,7 +27,7 @@ public class LocationRepository : ILocationRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failure to insert location");
-            GeneralErrors.Failure("location.insert", "Failed to insert location");
+            GeneralErrors.Failure("Failed to insert location");
         }
         
         return location.Id.Value;

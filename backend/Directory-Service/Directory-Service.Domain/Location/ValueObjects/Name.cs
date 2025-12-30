@@ -8,10 +8,10 @@ public record Name(string Value)
     public static Result<Name, Error> Create(string name)
     {
         if(string.IsNullOrWhiteSpace(name))
-            return GeneralErrors.Validation("name.validation", "Name is not valid");
+            return Error.ValueIsInvalid("name.validation", "Name is not valid", "name");
         
         if(name.Length is < Constants.MIN_SYMBOLS_LENGTH_3 or > Constants.MAX_SYMBOLS_LENGTH_150)
-            return GeneralErrors.Validation("name.validation", "Name length must be between 3 and 150 characters");
+            return Error.ValueIsInvalid("name.validation", "Name length must be between 3 and 150 characters", "name");
             
         return new Name(name);
     }

@@ -8,10 +8,10 @@ public record Name(string Value)
     public static Result<Name, Error> Create(string name)
     {
         if(string.IsNullOrWhiteSpace(name))
-            return GeneralErrors.Validation("name.not.validation", "Name is not null or empty");
+            return Error.ValueIsInvalid("name.not.validation", "Name is not null or empty", "name");
         
         if(name.Length < Constants.MIN_SYMBOLS_LENGTH_3 || name.Length > Constants.MAX_SYMBOLS_LENGTH_100)
-            return GeneralErrors.Validation("name.too_short.validation", "Name is not in range");
+            return Error.ValueIsInvalid("name.too_short.validation", "Name is not in range", "name");
         
         return new Name(name);
     }
