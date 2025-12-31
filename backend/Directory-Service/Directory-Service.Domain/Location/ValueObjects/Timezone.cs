@@ -2,7 +2,7 @@ using System.Text;
 using CSharpFunctionalExtensions;
 using Directory_Service.Shared;
 
-namespace Directory_Service.Domain.Location;
+namespace Directory_Service.Domain.Location.ValueObjects;
 
 public record Timezone(string Value)
 {
@@ -11,10 +11,10 @@ public record Timezone(string Value)
     public static Result<Timezone, Error> Create(string continent, string city)
     {
         if(string.IsNullOrWhiteSpace(continent))
-            return Error.Validation("continent.error", "Continent is not valid");
+            return Error.ValueIsInvalid("continent.error", "Continent is not valid", "continent");
         
         if(string.IsNullOrWhiteSpace(city))
-            return Error.Validation("city.error", "City is not valid");
+            return Error.ValueIsInvalid("city.error", "City is not valid", "city");
 
         var stringBuilder = new StringBuilder();
         

@@ -6,11 +6,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Domain", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Application", "Directory-Service.Application\Directory-Service.Application.csproj", "{DCA0B478-0606-4753-9080-E36BAED13F8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Infrastructure", "Directory-Service.Infrastructure\Directory-Service.Infrastructure.csproj", "{511C7203-BBF4-42E9-9B68-FE7D36F7A7BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Infrastructure.Postgres", "Directory-Service.Infrastructure.Postgres\Directory-Service.Infrastructure.Postgres.csproj", "{511C7203-BBF4-42E9-9B68-FE7D36F7A7BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Contracts", "Directory-Service.Contracts\Directory-Service.Contracts.csproj", "{FB873EC4-1371-47AE-B239-95D3C0D15943}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Directory-Service.Shared", "Directory-Service.Shared\Directory-Service.Shared.csproj", "{3B71C682-5D3A-4536-BCBF-F7C28C00A76B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA1691C6-0B66-4D8E-916A-2C3B46489124}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,4 +12,10 @@
       <ProjectReference Include="..\Directory-Service.Domain\Directory-Service.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+    </ItemGroup>
+
 </Project>

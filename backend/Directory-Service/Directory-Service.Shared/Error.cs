@@ -4,8 +4,17 @@ public class Error
 {
     public string Code { get; }
     public string Message { get; }
+    public string Field { get; }
     public ErrorType ErrorType { get; }
 
+    private Error(string code, string message, string field, ErrorType errorType)
+    {
+        Code = code;
+        Message = message;
+        ErrorType = errorType;
+        Field = field;
+    }
+    
     private Error(string code, string message, ErrorType errorType)
     {
         Code = code;
@@ -13,17 +22,17 @@ public class Error
         ErrorType = errorType;
     }
 
-    public static Error Validation(string? code, string? message) =>
-        new Error(code ?? "validation.error", message ?? "Not validation", ErrorType.Validation);
+    public Errors ToErrors() => this;
+
+    public static Error ValueIsInvalid(string? code, string? message, string? field) =>
+        new(code ?? "validation.error", message ?? "Not validation", field ?? "Default field" , ErrorType.Validation);
 
     public static Error Failure(string? code, string? message) =>
-        new Error(code ?? "failure.error", message ?? "Failure error", ErrorType.Failure);
-}
+        new(code ?? "failure.error", message ?? "Failure error", ErrorType.Failure);
 
-public enum ErrorType
-{
-    Validation,
-    NotFound,
-    Conflict,
-    Failure
+    public static Error NotFounded(string? code, string? message) =>
+        new(code ?? "not.found.error", message ?? "Couldn't find it in the database", ErrorType.NotFound);
+
+    public static Error Conflict(string? code, string? message)
+        => new Error(code ?? "conflict.error", message ?? "A conflict situation has occurred", ErrorType.Conflict);
 }

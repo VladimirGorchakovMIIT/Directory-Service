@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
 using Directory_Service.Shared;
 
-namespace Directory_Service.Domain.Department;
+namespace Directory_Service.Domain.Department.ValueObjects;
 
 public record Path(string Value)
 {
