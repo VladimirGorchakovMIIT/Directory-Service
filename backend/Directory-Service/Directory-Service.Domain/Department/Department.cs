@@ -42,7 +42,7 @@ public class Department
 
     public Identifier Identifier { get; private set; }
 
-    //Возможно, нужно будет создать ValueObject, где будет производиться проверка на родителя
+    //Возможно, нужно будет создать ValueObject, где будет производиться проверка на родителя.
     public Department? Parent { get; private set; }
     
     public DepartmentId? ParentId { get; private set; }
