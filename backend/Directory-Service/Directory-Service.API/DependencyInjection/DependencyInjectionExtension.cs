@@ -15,8 +15,7 @@ public static class DependencyInjectionExtension
             .ReadFrom.Configuration(configuration)
             .ReadFrom.Services(sp)
             .Enrich.WithThreadId()
-            .Enrich.FromLogContext()
-            .Enrich.WithProperty("ServiceName", "LessonService"));
+            .Enrich.FromLogContext());
 
         return services;
     }
