@@ -3,6 +3,7 @@ using System;
 using Directory_Service.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Directory_Service.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260101144753_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +27,7 @@ namespace Directory_Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Directory_Service.Domain.Department.Department", b =>
                 {
-                    b.Property<Guid>("DepartmentId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -50,9 +53,6 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<Guid?>("ParentDepartmentId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid")
                         .HasColumnName("parent_id");
@@ -66,10 +66,8 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("DepartmentId")
+                    b.HasKey("Id")
                         .HasName("pk_department");
-
-                    b.HasIndex("ParentDepartmentId");
 
                     b.HasIndex("ParentId");
 
@@ -199,13 +197,8 @@ namespace Directory_Service.Infrastructure.Migrations
             modelBuilder.Entity("Directory_Service.Domain.Department.Department", b =>
                 {
                     b.HasOne("Directory_Service.Domain.Department.Department", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentDepartmentId");
-
-                    b.HasOne("Directory_Service.Domain.Department.Department", null)
                         .WithMany("ChildrenDepartments")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
                 });
