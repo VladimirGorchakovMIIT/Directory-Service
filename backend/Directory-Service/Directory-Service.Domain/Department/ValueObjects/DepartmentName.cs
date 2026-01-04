@@ -3,15 +3,15 @@ using Directory_Service.Shared;
 
 namespace Directory_Service.Domain.Department.ValueObjects;
 
-public record Name(string Value)
+public record DepartmentName(string Value)
 {
     private const short MAX_LENGHT_150 = 150;
     
-    public static Result<Name, Error> Create(string name)
+    public static Result<DepartmentName, Error> Create(string name)
     {
         if(string.IsNullOrWhiteSpace(name) || name.Length > MAX_LENGHT_150)
             return Error.ValueIsInvalid("not.name.validation", "This name is too long or empty", "name");
 
-        return new Name(name);
+        return new DepartmentName(name);
     }
 }

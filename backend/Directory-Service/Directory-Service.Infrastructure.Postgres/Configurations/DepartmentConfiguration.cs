@@ -11,9 +11,11 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
     public void Configure(EntityTypeBuilder<Department> builder)
     {
         builder.ToTable("department");
-        builder.HasKey(x => x.Id).HasName("pk_department");
+        builder.HasKey(x => x.DepartmentId).HasName("pk_department");
+
+        builder.Property(x => x.Depth).HasColumnName("depth"); 
         
-        builder.Property(x => x.Id)
+        builder.Property(x => x.DepartmentId)
             .HasConversion(d => d.Value, d => new DepartmentId(d))
             .HasColumnName("id");
         
@@ -21,8 +23,8 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasConversion(p => p!.Value, p => new DepartmentId(p))
             .HasColumnName("parent_id");
 
-        builder.Property(n => n.Name)
-            .HasConversion(n => n.Value, d => new Name(d))
+        builder.Property(n => n.DepartmentName)
+            .HasConversion(n => n.Value, d => new DepartmentName(d))
             .HasColumnName("name");
         
         builder.Property(d => d.Identifier)
@@ -33,17 +35,16 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .HasConversion(d => d.Value, d => new Path(d))
             .HasColumnName("path");
         
-        builder.Property(d => d.Depth)
-            .HasConversion(d => d.Value, d => new Depth(d))
-            .HasColumnName("depth");
-        
         builder.Property(d => d.IsActive).HasColumnName("is_active");
         
         builder.Property(d => d.CreatedAt).HasColumnName("created_at");
         
         builder.Property(d => d.UpdatedAt).HasColumnName("updated_at");
 
-        builder.HasOne(d => d.Parent).WithMany(p => p.DepartmentsChild)
-            .HasForeignKey(d => d.ParentId);
+        builder.HasMany(d => d.ChildrenDepartments)
+            .WithOne()
+            .IsRequired(false)
+            .HasForeignKey(d => d.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

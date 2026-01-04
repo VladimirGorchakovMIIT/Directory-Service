@@ -20,7 +20,7 @@ namespace Directory_Service.Infrastructure.Migrations
                     identifier = table.Column<string>(type: "text", nullable: false),
                     parent_id = table.Column<Guid>(type: "uuid", nullable: true),
                     path = table.Column<string>(type: "text", nullable: false),
-                    depth = table.Column<string>(type: "text", nullable: false),
+                    depth = table.Column<int>(type: "integer", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)

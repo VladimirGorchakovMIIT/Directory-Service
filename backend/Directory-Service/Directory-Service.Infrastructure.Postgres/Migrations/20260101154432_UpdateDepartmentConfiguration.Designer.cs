@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Directory_Service.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251225195350_Initial")]
-    partial class Initial
+    [Migration("20260101154432_UpdateDepartmentConfiguration")]
+    partial class UpdateDepartmentConfiguration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,7 +27,7 @@ namespace Directory_Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Directory_Service.Domain.Department.Department", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -35,9 +35,13 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Depth")
+                    b.Property<string>("DepartmentName")
                         .IsRequired()
                         .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Depth")
+                        .HasColumnType("integer")
                         .HasColumnName("depth");
 
                     b.Property<string>("Identifier")
@@ -49,10 +53,8 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                    b.Property<Guid?>("ParentDepartmentId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid")
@@ -67,8 +69,10 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Id")
+                    b.HasKey("DepartmentId")
                         .HasName("pk_department");
+
+                    b.HasIndex("ParentDepartmentId");
 
                     b.HasIndex("ParentId");
 
@@ -198,8 +202,13 @@ namespace Directory_Service.Infrastructure.Migrations
             modelBuilder.Entity("Directory_Service.Domain.Department.Department", b =>
                 {
                     b.HasOne("Directory_Service.Domain.Department.Department", "Parent")
-                        .WithMany("DepartmentsChild")
-                        .HasForeignKey("ParentId");
+                        .WithMany()
+                        .HasForeignKey("ParentDepartmentId");
+
+                    b.HasOne("Directory_Service.Domain.Department.Department", null)
+                        .WithMany("ChildrenDepartments")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
                 });
@@ -244,7 +253,7 @@ namespace Directory_Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Directory_Service.Domain.Location.Location", b =>
                 {
-                    b.OwnsOne("Directory_Service.Domain.Location.Address", "Address", b1 =>
+                    b.OwnsOne("Directory_Service.Domain.Location.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("LocationId")
                                 .HasColumnType("uuid");
@@ -283,11 +292,11 @@ namespace Directory_Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Directory_Service.Domain.Department.Department", b =>
                 {
+                    b.Navigation("ChildrenDepartments");
+
                     b.Navigation("DepartmentLocations");
 
                     b.Navigation("DepartmentPositions");
-
-                    b.Navigation("DepartmentsChild");
                 });
 
             modelBuilder.Entity("Directory_Service.Domain.Location.Location", b =>
