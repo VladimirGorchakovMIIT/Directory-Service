@@ -24,9 +24,14 @@ public class Error
 
     public Errors ToErrors() => this;
 
+    public string GetMessage() => Message;
+    
     public static Error ValueIsInvalid(string? code, string? message, string? field) =>
         new(code ?? "validation.error", message ?? "Not validation", field ?? "Default field" , ErrorType.Validation);
 
+    public static Error Validation(string? code, string? message) => 
+        new(code ?? "validation.error", message ?? "Not validation", ErrorType.Validation);
+    
     public static Error Failure(string? code, string? message) =>
         new(code ?? "failure.error", message ?? "Failure error", ErrorType.Failure);
 

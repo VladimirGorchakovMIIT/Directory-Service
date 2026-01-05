@@ -3,11 +3,23 @@ using Directory_Service.Shared;
 
 namespace Directory_Service.Domain.Department.ValueObjects;
 
-public record Path(string Value)
+public record Path
 {
-    public static Result<Path, Error> Create(string identifier)
+    private const char Separator = '/';
+    public string Value { get; }
+    
+    public Path(string value)
     {
-        //TODO необходимо будет продумать и реализовать логику формирования пути
-        return new Path(identifier);
+        Value = value;
+    }
+
+    public static Path CreateParent(Identifier identifier)
+    {
+        return new Path(identifier.Value);
+    }
+
+    public Path CreateChild(Identifier childIdentifier)
+    {
+        return new Path(Value + Separator + childIdentifier.Value);
     }
 }
