@@ -50,14 +50,6 @@ public class CreateLocationHandler
             return validationResult.ToErrors();
         }
         
-        var resultAddress = await _locationRepository.GetByAddressAsync(command.Request.Address, cancellationToken);
-
-        if (resultAddress.IsSuccess)
-        {
-            _logger.LogError("This address already exists in the database. It is not possible to create a similar address");
-            return Error.Conflict("address.conflict", "This address already exists in the database. It is not possible to create a similar address").ToErrors();
-        }
-        
         var request = command.Request;
         var locationId = Guid.NewGuid();
         

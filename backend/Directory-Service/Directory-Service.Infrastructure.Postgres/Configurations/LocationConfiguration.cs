@@ -8,11 +8,7 @@ namespace Directory_Service.Infrastructure.Configurations;
 public static class Index
 {
     public static string NAME = "ix_location_name";
-    public static string ADDRESS = "ix_location_address";
-    public static string BUILDING = "ix_location_building";
-    public static string CITY = "ix_location_city";
-    public static string FLAT = "ix_location_flat";
-    public static string STREET = "ix_location_street";
+    public static string ADDRESS = "ix_locations_address";
 }
 
 public class LocationConfiguration : IEntityTypeConfiguration<Location>

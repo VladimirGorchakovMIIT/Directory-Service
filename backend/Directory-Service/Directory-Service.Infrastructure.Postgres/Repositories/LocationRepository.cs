@@ -26,21 +26,23 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
         {
             if (pgEx is { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: not null })
             {
-                if (pgEx.ConstraintName.Contains(Index.NAME, StringComparison.InvariantCultureIgnoreCase))
+                var constraintName = pgEx.ConstraintName;
+                
+                if (constraintName.Contains(Index.NAME, StringComparison.InvariantCultureIgnoreCase))
                 {
                     logger.LogError(pgEx, "Название локации должен быть уникальным {name}", location.Name.Value);
                     return LocationError.NameConflict("name.location.conflict", location.Name.Value);
                 }
 
-                // if (pgEx.ConstraintName.Contains(Index.ADDRESS, StringComparison.InvariantCultureIgnoreCase))
-                // {
-                //     _logger.LogError(pgEx, "Адрес локации не должен совпадать с уже имеющейся локацией хранящейся в базе данных {address}", location.Address);
-                //     return LocationError.NameConflict("address.location.conflict", location.Address.TranslateToString());
-                // }
+                if (constraintName.Equals(Index.ADDRESS, StringComparison.OrdinalIgnoreCase))
+                {
+                    logger.LogError(pgEx, "Название адреса должен быть уникальным. Такой адрес уже существует в базе данных");
+                    return LocationError.AddressIsConflict();
+                }
             }
 
-            // _logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name.Value);
-            // LocationError.DatabaseError();
+            logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name.Value);
+            LocationError.DatabaseError();
         }
         catch (OperationCanceledException ex)
         {
@@ -49,31 +51,5 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
         }
 
         return location.Id.Value;
-    }
-
-    public async Task<Result<Address, Error>> GetByAddressAsync(AddressRequest addressReq, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var addressResult = Address.Create(addressReq.Street, addressReq.City, addressReq.Building, addressReq.Flat);
-            
-            if (addressResult.IsFailure)
-                return Error.ValueIsInvalid("address.is.invalid", "Address is not valid", addressResult.Error.Field);
-            
-            var location = await dbContext.Locations.WhereAddressEquals(addressResult.Value).FirstOrDefaultAsync(cancellationToken);
-            
-            if (location is null)
-            {
-                logger.LogError("Такого адреса в базе данных не существует");
-                return GeneralErrors.NotFounded(null, "Такого адреса в базе данных не существует");
-            }
-
-            return location.Address;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Произошла ошибка на стороне базы данных");
-            return LocationError.DatabaseError();
-        }
     }
 }

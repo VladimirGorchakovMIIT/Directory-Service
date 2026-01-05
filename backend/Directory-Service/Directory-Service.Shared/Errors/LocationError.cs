@@ -8,6 +8,9 @@ public static class LocationError
         return Error.Conflict(code, $"Сущность с таким названием уже существует {name}");
     }
 
+    public static Error AddressIsConflict() =>
+        Error.Conflict("address.is.conflict", "Название адреса должен быть уникальным. Такой адрес уже существует в базе данных");
+
     public static Error DatabaseError() =>
         Error.Failure("location.database.error", "Ошибка базы данных при работе с сервером - location");
 
