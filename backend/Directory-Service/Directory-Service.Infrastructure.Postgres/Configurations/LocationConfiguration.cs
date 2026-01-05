@@ -5,41 +5,59 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Directory_Service.Infrastructure.Configurations;
 
+public static class Index
+{
+    public static string NAME = "ix_location_name";
+    public static string ADDRESS = "ix_location_address";
+    public static string BUILDING = "ix_location_building";
+    public static string CITY = "ix_location_city";
+    public static string FLAT = "ix_location_flat";
+    public static string STREET = "ix_location_street";
+}
+
 public class LocationConfiguration : IEntityTypeConfiguration<Location>
 {
     public void Configure(EntityTypeBuilder<Location> builder)
     {
         builder.ToTable("location");
-        
+
         builder.HasKey(l => l.Id).HasName("pk_location");
-        
+
         builder.Property(l => l.Id)
             .HasConversion(l => l.Value, l => new LocationId(l))
             .HasColumnName("id");
-        
+
         builder.Property(l => l.Name)
             .HasConversion(l => l.Value, l => new Name(l))
             .IsRequired()
             .HasColumnName("name");
-        
+
         builder.OwnsOne(l => l.Address, nb =>
         {
             nb.ToJson();
+            
+            // nb.HasIndex(x => x.Building).IsUnique().HasDatabaseName(Index.BUILDING);
+            // nb.HasIndex(x => x.City).IsUnique().HasDatabaseName(Index.CITY);
+            // nb.HasIndex(x => x.Flat).IsUnique().HasDatabaseName(Index.FLAT);
+            // nb.HasIndex(x => x.Street).IsUnique().HasDatabaseName(Index.STREET);
+            
             nb.Property(x => x.Building).IsRequired().HasColumnName("building");
             nb.Property(x => x.City).IsRequired().HasColumnName("city");
             nb.Property(x => x.Flat).IsRequired().HasColumnName("flat");
             nb.Property(x => x.Street).IsRequired().HasColumnName("street");
         });
-        
+
         builder.Property(l => l.Timezone)
             .HasConversion(l => l.Value, l => new Timezone(l))
             .IsRequired()
             .HasColumnName("timezone");
-        
+
         builder.Property(l => l.IsActive).HasColumnName("is_active");
-        
+
         builder.Property(l => l.CreatedAt).HasColumnName("created_at");
-        
+
         builder.Property(l => l.UpdatedAt).HasColumnName("updated_at");
+
+        builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName(Index.NAME);
     }
 }

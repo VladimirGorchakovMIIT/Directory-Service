@@ -1,13 +1,31 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Application.Extensions;
+using Directory_Service.Application.Validators;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Shared;
 using Directory_Service.Domain.Location.ValueObjects;
+using Directory_Service.Shared.Errors;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using DomainLocation = Directory_Service.Domain.Location.Location;
 
 namespace Directory_Service.Application.Location;
+
+public class CreateLocationRequestValidator : AbstractValidator<CreateLocationRequest>
+{
+    public CreateLocationRequestValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().WithError(GeneralErrors.ValueIsInvalid("Name"));
+        
+        RuleFor(x => x.Address)
+            .MustBeValueObject(addr => Address.Create(addr.Street, addr.City, addr.Building, addr.Flat));
+
+        RuleFor(x => x.Timezone)
+            .MustBeValueObject(tz => Timezone.Create(tz.Continent, tz.City));
+    }
+}
+
+public record CreateLocationCommand(CreateLocationRequest Request);
 
 public class CreateLocationHandler
 {
@@ -22,9 +40,9 @@ public class CreateLocationHandler
         _validator = validator;
     }
 
-    public async Task<Result<Guid, Errors>> Handle(CreateLocationRequest request, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Errors>> Handle(CreateLocationCommand command, CancellationToken cancellationToken)
     { 
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(command.Request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
@@ -32,32 +50,26 @@ public class CreateLocationHandler
             return validationResult.ToErrors();
         }
         
+        var resultAddress = await _locationRepository.GetByAddressAsync(command.Request.Address, cancellationToken);
+
+        if (resultAddress.IsSuccess)
+        {
+            _logger.LogError("This address already exists in the database. It is not possible to create a similar address");
+            return Error.Conflict("address.conflict", "This address already exists in the database. It is not possible to create a similar address").ToErrors();
+        }
+        
+        var request = command.Request;
         var locationId = Guid.NewGuid();
         
-        var nameResult = Name.Create(request.Name);
-        if (nameResult.IsFailure)
-        {
-            _logger.LogError("Name failed: {name}", nameResult.Error);
-            return nameResult.Error.ToErrors();
-        }
+        var nameResult = Name.Create(request.Name).Value;
         
         var addReq = request.Address;
-        var addressResult = Address.Create(addReq.Street, addReq.City, addReq.Building, addReq.Flat);
-        if (addressResult.IsFailure)
-        {
-            _logger.LogError("Address failed: {address}", addressResult.Error);
-            return addressResult.Error.ToErrors();
-        }
+        var addressResult = Address.Create(addReq.Street, addReq.City, addReq.Building, addReq.Flat).Value;
         
         var timezoneRequest = request.Timezone;
-        var timezoneResult = Timezone.Create(timezoneRequest.Continent, timezoneRequest.City);
-        if (timezoneResult.IsFailure)
-        {
-            _logger.LogError("Time zone failed: {timezone}", timezoneResult.Error);
-            return timezoneResult.Error.ToErrors();
-        }
+        var timezoneResult = Timezone.Create(timezoneRequest.Continent, timezoneRequest.City).Value;
         
-        var location = DomainLocation.Create(new LocationId(locationId), nameResult.Value, addressResult.Value, timezoneResult.Value, false, []);
+        var location = DomainLocation.Create(new LocationId(locationId), nameResult, addressResult, timezoneResult, false, []);
         
         await _locationRepository.CreateAsync(location, cancellationToken);
         

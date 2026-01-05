@@ -1,10 +1,13 @@
 using CSharpFunctionalExtensions;
 using Directory_Service.Shared;
+using Directory_Service.Shared.Errors;
 
 namespace Directory_Service.Domain.Location.ValueObjects;
 
 public record Address(string Street, string City, int Building, int Flat)
 {
+    private const string Separator = "||";
+    
     public static Result<Address, Error> Create(string street, string city, int building, int flat)
     {
         if(string.IsNullOrWhiteSpace(street))
@@ -18,4 +21,6 @@ public record Address(string Street, string City, int Building, int Flat)
         
         return new Address(street, city, building, flat);
     }
+    
+    public string TranslateToString() => string.Join(Separator, Street, City, Building, Flat);
 }

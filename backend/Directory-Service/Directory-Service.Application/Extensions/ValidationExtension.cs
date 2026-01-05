@@ -1,4 +1,5 @@
 ﻿using Directory_Service.Shared;
+using Directory_Service.Shared.Errors;
 using FluentValidation.Results;
 
 namespace Directory_Service.Application.Extensions;

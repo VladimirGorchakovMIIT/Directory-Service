@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Directory_Service.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260101154432_UpdateDepartmentConfiguration")]
-    partial class UpdateDepartmentConfiguration
+    [Migration("20260105150336_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -162,6 +162,10 @@ namespace Directory_Service.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_location");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_location_name");
+
                     b.ToTable("location", (string)null);
                 });
 
@@ -277,6 +281,22 @@ namespace Directory_Service.Infrastructure.Migrations
                                 .HasColumnName("street");
 
                             b1.HasKey("LocationId");
+
+                            b1.HasIndex("Building")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_building");
+
+                            b1.HasIndex("City")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_city");
+
+                            b1.HasIndex("Flat")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_flat");
+
+                            b1.HasIndex("Street")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_street");
 
                             b1.ToTable("location");
 
