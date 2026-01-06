@@ -1,4 +1,4 @@
-namespace Directory_Service.Shared;
+namespace Directory_Service.Shared.Errors;
 
 public enum ErrorType
 {

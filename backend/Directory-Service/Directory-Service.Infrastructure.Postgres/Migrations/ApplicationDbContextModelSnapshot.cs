@@ -159,6 +159,10 @@ namespace Directory_Service.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_location");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_location_name");
+
                     b.ToTable("location", (string)null);
                 });
 
@@ -274,6 +278,22 @@ namespace Directory_Service.Infrastructure.Migrations
                                 .HasColumnName("street");
 
                             b1.HasKey("LocationId");
+
+                            b1.HasIndex("Building")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_building");
+
+                            b1.HasIndex("City")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_city");
+
+                            b1.HasIndex("Flat")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_flat");
+
+                            b1.HasIndex("Street")
+                                .IsUnique()
+                                .HasDatabaseName("ix_location_street");
 
                             b1.ToTable("location");
 

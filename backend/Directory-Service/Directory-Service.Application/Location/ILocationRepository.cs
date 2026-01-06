@@ -1,5 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using Directory_Service.Contracts.Location;
+using Directory_Service.Domain.Location.ValueObjects;
 using Directory_Service.Shared;
+using Directory_Service.Shared.Errors;
 using LocationDomain = Directory_Service.Domain.Location.Location;
 
 namespace Directory_Service.Application.Location;

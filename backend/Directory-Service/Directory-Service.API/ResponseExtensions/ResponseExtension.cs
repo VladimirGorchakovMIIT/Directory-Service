@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Directory_Service.Shared;
+using Directory_Service.Shared.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Directory_Service.Core.ResponseExtensions;

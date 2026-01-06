@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Shared;
+using Directory_Service.Shared.Errors;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace Directory_Service.Core.Endpoints;

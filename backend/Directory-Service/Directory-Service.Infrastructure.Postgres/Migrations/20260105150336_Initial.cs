@@ -18,6 +18,7 @@ namespace Directory_Service.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     identifier = table.Column<string>(type: "text", nullable: false),
+                    ParentDepartmentId = table.Column<Guid>(type: "uuid", nullable: true),
                     parent_id = table.Column<Guid>(type: "uuid", nullable: true),
                     path = table.Column<string>(type: "text", nullable: false),
                     depth = table.Column<int>(type: "integer", nullable: false),
@@ -29,10 +30,16 @@ namespace Directory_Service.Infrastructure.Migrations
                 {
                     table.PrimaryKey("pk_department", x => x.id);
                     table.ForeignKey(
+                        name: "FK_department_department_ParentDepartmentId",
+                        column: x => x.ParentDepartmentId,
+                        principalTable: "department",
+                        principalColumn: "id");
+                    table.ForeignKey(
                         name: "FK_department_department_parent_id",
                         column: x => x.parent_id,
                         principalTable: "department",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,6 +133,11 @@ namespace Directory_Service.Infrastructure.Migrations
                 column: "parent_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_department_ParentDepartmentId",
+                table: "department",
+                column: "ParentDepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_department_location_department_id",
                 table: "department_location",
                 column: "department_id");
@@ -144,6 +156,12 @@ namespace Directory_Service.Infrastructure.Migrations
                 name: "IX_department_position_position_id",
                 table: "department_position",
                 column: "position_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_location_name",
+                table: "location",
+                column: "name",
+                unique: true);
         }
 
         /// <inheritdoc />

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Directory_Service.Infrastructure;
 
-public class ApplicationDbContext(IConfigurationManager configuration) : DbContext
+public class ApplicationDbContext(IConfiguration configuration) : DbContext
 {
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Position> Positions => Set<Position>();
