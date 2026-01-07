@@ -1,0 +1,19 @@
+﻿using Directory_Service.Application.Department;
+using Directory_Service.Core.Endpoints;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Directory_Service.Core.Controllers;
+
+[ApiController]
+[Route("/api/[controller]")]
+public class DepartmentsController : ControllerBase
+{
+    [HttpPost]
+    public async Task<EndpointResult<Guid>> Create(
+        [FromBody] CreateDepartmentCommand command,
+        [FromServices] CreateDepartmentHandler handler,
+        CancellationToken cancellationToken)
+    {
+        return await handler.Handle(command, cancellationToken);
+    }
+}

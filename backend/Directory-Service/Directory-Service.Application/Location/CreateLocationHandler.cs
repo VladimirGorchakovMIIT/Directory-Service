@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Application.Extensions;
-using Directory_Service.Application.Validators;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Shared;
 using Directory_Service.Domain.Location.ValueObjects;
@@ -10,20 +9,6 @@ using Microsoft.Extensions.Logging;
 using DomainLocation = Directory_Service.Domain.Location.Location;
 
 namespace Directory_Service.Application.Location;
-
-public class CreateLocationRequestValidator : AbstractValidator<CreateLocationRequest>
-{
-    public CreateLocationRequestValidator()
-    {
-        RuleFor(x => x.Name).NotEmpty().WithError(GeneralErrors.ValueIsInvalid("Name"));
-        
-        RuleFor(x => x.Address)
-            .MustBeValueObject(addr => Address.Create(addr.Street, addr.City, addr.Building, addr.Flat));
-
-        RuleFor(x => x.Timezone)
-            .MustBeValueObject(tz => Timezone.Create(tz.Continent, tz.City));
-    }
-}
 
 public record CreateLocationCommand(CreateLocationRequest Request);
 

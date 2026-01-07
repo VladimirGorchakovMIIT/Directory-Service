@@ -10,4 +10,6 @@ namespace Directory_Service.Application.Location;
 public interface ILocationRepository
 {
     Task<Result<Guid, Error>> CreateAsync(LocationDomain location, CancellationToken cancellationToken);
+    
+    Task<Result<LocationDomain, Error>> GetLocationByIdAsync(LocationId locationId, CancellationToken cancellationToken);
 }

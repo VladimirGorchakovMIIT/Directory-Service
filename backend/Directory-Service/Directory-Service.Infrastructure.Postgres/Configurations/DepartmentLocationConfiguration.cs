@@ -18,15 +18,5 @@ public class DepartmentLocationConfiguration : IEntityTypeConfiguration<Departme
             .HasColumnName("department_location_id");        
         
         builder.Property(dl => dl.CreatedAt).HasColumnName("created_at");
-        
-        builder.HasOne(dl => dl.Department).WithMany(d => d.DepartmentLocations)
-            .HasForeignKey("department_id")
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasOne(dl => dl.Location).WithMany(l => l.DepartmentsLocations)
-            .HasForeignKey("location_id")
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

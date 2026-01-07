@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Domain.Department.ValueObjects;
+using Directory_Service.Domain.Location.ValueObjects;
 using Directory_Service.Shared;
 using Directory_Service.Shared.Errors;
 using Path = Directory_Service.Domain.Department.ValueObjects.Path;
@@ -17,14 +18,16 @@ public sealed class Department
     }
 
     private Department(
-        DepartmentId departmentDepartmentId,
+        DepartmentId departmentId,
         DepartmentName departmentName,
         Identifier identifier,
         Path path,
         int depth,
-        IEnumerable<DepartmentLocation> departmentLocations)
+        IEnumerable<DepartmentLocation> departmentLocations,
+        DepartmentId parentDepartmentId)
     {
-        DepartmentId = departmentDepartmentId;
+        DepartmentId = departmentId;
+        ParentId = parentDepartmentId;
         DepartmentName = departmentName;
         Identifier = identifier;
         Path = path;
@@ -40,7 +43,7 @@ public sealed class Department
 
     public Identifier Identifier { get; private set; }
 
-    //Возможно, нужно будет создать ValueObject, где будет производиться проверка на родителя.
+    //Удалить после проведенной проверки
     public Department? Parent { get; private set; }
 
     public DepartmentId? ParentId { get; private set; }
@@ -61,20 +64,33 @@ public sealed class Department
 
     public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
 
+    public static IReadOnlyList<DepartmentLocation> LinkDepartmentLocations(IEnumerable<Guid> locationIds, Guid departmentId)
+    {
+        List<DepartmentLocation> departmentLocations = [];
+        
+        foreach (var locationId in locationIds)
+        {
+            var departmentLocation = new DepartmentLocation(new DepartmentLocationId(Guid.NewGuid()), new DepartmentId(departmentId), new LocationId(locationId));
+            departmentLocations.Add(departmentLocation);
+        }
+
+        return departmentLocations;
+    }
+    
     public static Result<Department, Error> CreateParent(
         DepartmentName departmentName,
         Identifier identifier,
-        IEnumerable<DepartmentLocation> departmentLocations,
+        IEnumerable<DepartmentLocation>? departmentLocations,
         DepartmentId? departmentId)
     {
-        var departmentLocationList = departmentLocations.ToList();
+        var departmentLocationList = (departmentLocations ?? []).ToList();
 
         if (!departmentLocationList.Any())
             return Error.Validation("department.locations", "Departments locations must contain at least one location");
 
         var path = Path.CreateParent(identifier);
 
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, 0, departmentLocations);
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, 0, departmentLocations, null);
     }
 
     public static Result<Department, Error> CreateChild(
@@ -84,13 +100,15 @@ public sealed class Department
         IEnumerable<DepartmentLocation> departmentLocations,
         DepartmentId? departmentId = null)
     {
-        var departmentLocationList = departmentLocations.ToList();
+        var departmentLocationList = (departmentLocations ?? []).ToList();
 
         if (!departmentLocationList.Any())
             return Error.Validation("department.locations", "Departments locations must contain at least one location");
         
         var path = parent.Path.CreateChild(identifier);
 
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, parent.Depth + 1, departmentLocations);
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, parent.Depth + 1, departmentLocations, parent.DepartmentId);
     }
+    
+    
 }

@@ -42,14 +42,36 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
             }
 
             logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name.Value);
-            LocationError.DatabaseError();
+            GeneralErrors.DatabaseError();
         }
         catch (OperationCanceledException ex)
         {
             logger.LogError(ex, "Operation canceled while creating location with name {name}", location.Name.Value);
-            LocationError.OperationCancelled();
+            GeneralErrors.OperationCancelled();
         }
 
         return location.Id.Value;
+    }
+
+    public async Task<Result<Location, Error>> GetLocationByIdAsync(LocationId locationId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var location = await dbContext.Locations
+                .Where(l => l.Id == locationId).FirstOrDefaultAsync(cancellationToken);
+
+            if (location is null)
+            {
+                logger.LogError("Location with id {locationId} not found", locationId.Value);
+                return GeneralErrors.NotFounded(locationId.Value);
+            }
+            
+            return location;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "This location not founded in database by Id: {id}", locationId.Value);
+            return GeneralErrors.DatabaseError();
+        }
     }
 }

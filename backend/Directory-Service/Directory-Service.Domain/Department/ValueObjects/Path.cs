@@ -5,7 +5,7 @@ namespace Directory_Service.Domain.Department.ValueObjects;
 
 public record Path
 {
-    private const char Separator = '/';
+    private const char Separator = '.';
     public string Value { get; }
     
     public Path(string value)

@@ -21,7 +21,23 @@ public static class CustomValidators
         });
     }
 
-    public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(this IRuleBuilderOptions<T, TProperty> ruleBuilder, Error error) => 
-        ruleBuilder.WithMessage(JsonSerializer.Serialize(error));
+    public static IRuleBuilderOptionsConditions<T, IEnumerable<TProperty>> HasDuplicates<T, TProperty>(this IRuleBuilderOptions<T, IEnumerable<TProperty>> ruleBuilder)
+    {
+        return ruleBuilder.Custom((collections, context) =>
+        {
+            if(collections is null)
+                context.AddFailure(JsonSerializer.Serialize(GeneralErrors.ValueIsInvalid("The 'PositionsId' can`t be empty ")));
 
+            var duplicates = new HashSet<TProperty>();
+
+            foreach (var item in collections)
+            {
+                if(!duplicates.Add(item))
+                    context.AddFailure(JsonSerializer.Serialize(GeneralErrors.ValueIsInvalid("Founded duplicates item.")));
+            }
+        });
+    }
+
+    public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(this IRuleBuilderOptions<T, TProperty> ruleBuilder, Error error) =>
+        ruleBuilder.WithMessage(JsonSerializer.Serialize(error));
 }

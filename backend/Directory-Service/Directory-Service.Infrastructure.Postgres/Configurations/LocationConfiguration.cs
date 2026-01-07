@@ -48,6 +48,10 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             .IsRequired()
             .HasColumnName("timezone");
 
+        builder.HasMany(l => l.DepartmentsLocations)
+            .WithOne()
+            .HasForeignKey(l => l.LocationId);
+
         builder.Property(l => l.IsActive).HasColumnName("is_active");
 
         builder.Property(l => l.CreatedAt).HasColumnName("created_at");
