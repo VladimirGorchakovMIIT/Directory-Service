@@ -1,6 +1,6 @@
 ﻿namespace Directory_Service.Shared.Errors;
 
-public static class LocationError
+public class DepartmentError
 {
     public static Error NameConflict(string? code, string? name)
     {
@@ -8,6 +8,7 @@ public static class LocationError
         return Error.Conflict(code, $"Сущность с таким названием уже существует {name}");
     }
 
-    public static Error AddressIsConflict() =>
-        Error.Conflict("address.is.conflict", "Название адреса должен быть уникальным. Такой адрес уже существует в базе данных");
+    public static Error IdentifierIsConflict() =>
+        Error.Conflict("identifier.is.conflict", "The identifier name must be unique. Such an identifier already exists in the database");
+    
 }

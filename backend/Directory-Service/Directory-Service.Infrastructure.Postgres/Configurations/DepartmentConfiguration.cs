@@ -6,6 +6,11 @@ using Path = Directory_Service.Domain.Department.ValueObjects.Path;
 
 namespace Directory_Service.Infrastructure.Configurations;
 
+public static class DepartmentIndex
+{
+    public static string IDENTIFIER = "ix_department_identifier";
+}
+
 public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 {
     public void Configure(EntityTypeBuilder<Department> builder)
@@ -46,5 +51,16 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
             .IsRequired(false)
             .HasForeignKey(d => d.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(d => d.DepartmentLocations)
+            .WithOne()
+            .HasForeignKey(d => d.DepartmentId);
+        
+        builder
+            .HasMany( d => d.DepartmentPositions)
+            .WithOne()
+            .HasForeignKey(dp => dp.DepartmentId);
+        
+        builder.HasIndex(d => d.Identifier).IsUnique().HasDatabaseName("ix_department_identifier");
     }
 }

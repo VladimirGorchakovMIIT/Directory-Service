@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Directory_Service.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260105150336_Initial")]
+    [Migration("20260107080139_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -72,6 +72,10 @@ namespace Directory_Service.Infrastructure.Migrations
                     b.HasKey("DepartmentId")
                         .HasName("pk_department");
 
+                    b.HasIndex("Identifier")
+                        .IsUnique()
+                        .HasDatabaseName("ix_department_identifier");
+
                     b.HasIndex("ParentDepartmentId");
 
                     b.HasIndex("ParentId");
@@ -89,18 +93,18 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid>("department_id")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("location_id")
+                    b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
 
                     b.HasKey("DepartmentLocationId")
                         .HasName("pk_department_location");
 
-                    b.HasIndex("department_id");
+                    b.HasIndex("DepartmentId");
 
-                    b.HasIndex("location_id");
+                    b.HasIndex("LocationId");
 
                     b.ToTable("department_location", (string)null);
                 });
@@ -115,18 +119,18 @@ namespace Directory_Service.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid>("department_id")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("position_id")
+                    b.Property<Guid>("PositionId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id")
                         .HasName("pk_department_position");
 
-                    b.HasIndex("department_id");
+                    b.HasIndex("DepartmentId");
 
-                    b.HasIndex("position_id");
+                    b.HasIndex("PositionId");
 
                     b.ToTable("department_position", (string)null);
                 });
@@ -219,40 +223,32 @@ namespace Directory_Service.Infrastructure.Migrations
 
             modelBuilder.Entity("Directory_Service.Domain.Department.DepartmentLocation", b =>
                 {
-                    b.HasOne("Directory_Service.Domain.Department.Department", "Department")
+                    b.HasOne("Directory_Service.Domain.Department.Department", null)
                         .WithMany("DepartmentLocations")
-                        .HasForeignKey("department_id")
+                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Directory_Service.Domain.Location.Location", "Location")
+                    b.HasOne("Directory_Service.Domain.Location.Location", null)
                         .WithMany("DepartmentsLocations")
-                        .HasForeignKey("location_id")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Directory_Service.Domain.Department.DepartmentPosition", b =>
                 {
-                    b.HasOne("Directory_Service.Domain.Department.Department", "Department")
+                    b.HasOne("Directory_Service.Domain.Department.Department", null)
                         .WithMany("DepartmentPositions")
-                        .HasForeignKey("department_id")
+                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Directory_Service.Domain.Position.Position", "Position")
+                    b.HasOne("Directory_Service.Domain.Position.Position", null)
                         .WithMany("DepartmentPosition")
-                        .HasForeignKey("position_id")
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Position");
                 });
 
             modelBuilder.Entity("Directory_Service.Domain.Location.Location", b =>
@@ -281,22 +277,6 @@ namespace Directory_Service.Infrastructure.Migrations
                                 .HasColumnName("street");
 
                             b1.HasKey("LocationId");
-
-                            b1.HasIndex("Building")
-                                .IsUnique()
-                                .HasDatabaseName("ix_location_building");
-
-                            b1.HasIndex("City")
-                                .IsUnique()
-                                .HasDatabaseName("ix_location_city");
-
-                            b1.HasIndex("Flat")
-                                .IsUnique()
-                                .HasDatabaseName("ix_location_flat");
-
-                            b1.HasIndex("Street")
-                                .IsUnique()
-                                .HasDatabaseName("ix_location_street");
 
                             b1.ToTable("location");
 

@@ -36,5 +36,9 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
         builder.Property(p => p.UpdatedAt)
             .IsRequired()
             .HasColumnName("updated_at");
+
+        builder.HasMany(p => p.DepartmentPosition)
+            .WithOne()
+            .HasForeignKey(dp => dp.PositionId);
     }
 }

@@ -23,8 +23,6 @@ public class Error
     }
 
     public Errors ToErrors() => this;
-
-    public string GetMessage() => Message;
     
     public static Error ValueIsInvalid(string? code, string? message, string? field) =>
         new(code ?? "validation.error", message ?? "Not validation", field ?? "Default field" , ErrorType.Validation);

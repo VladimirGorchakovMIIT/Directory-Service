@@ -42,14 +42,41 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
             }
 
             logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name.Value);
-            LocationError.DatabaseError();
+            GeneralErrors.DatabaseError();
         }
         catch (OperationCanceledException ex)
         {
             logger.LogError(ex, "Operation canceled while creating location with name {name}", location.Name.Value);
-            LocationError.OperationCancelled();
+            GeneralErrors.OperationCancelled();
         }
 
         return location.Id.Value;
+    }
+
+    public async Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<Guid> locationsId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var locations = await dbContext.Locations
+                .Where(l => locationsId.Contains(l.Id.Value))
+                .ToListAsync(cancellationToken);
+            
+            var foundIds = locations.Select(l => l.Id.Value).ToHashSet();
+            
+            var notFoundedLocationIds = locationsId.Except(foundIds).ToList();
+            
+            if (notFoundedLocationIds.Any())
+            {
+                logger.LogError("Location with id {locationId} not found", notFoundedLocationIds);
+                return GeneralErrors.DatabaseError();
+            }
+            
+            return foundIds;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "When querying, there are identifiers that are not in the database");
+            return GeneralErrors.DatabaseError();
+        }
     }
 }
