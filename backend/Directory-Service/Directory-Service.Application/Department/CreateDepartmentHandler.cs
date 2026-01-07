@@ -46,14 +46,11 @@ public class CreateDepartmentHandler
         var departmentId = Guid.NewGuid();
         var departmentName = DepartmentName.Create(command.DepartmentName).Value;
         var identifier = Identifier.Create(command.Identifier).Value;
+        
+        var locationResult = await _locationRepository.DoesItExistLocationId(command.LocationsId, cancellationToken);
 
-        foreach (var locationId in command.LocationsId)
-        {
-            var locationResult = await _locationRepository.GetLocationByIdAsync(new LocationId(locationId), cancellationToken);
-
-            if (locationResult.IsFailure)
-                return locationResult.Error.ToErrors();
-        }
+        if (locationResult.IsFailure)
+            return locationResult.Error.ToErrors();
 
         var departmentsLocations = DepartmentDomain.LinkDepartmentLocations(command.LocationsId, departmentId);
 

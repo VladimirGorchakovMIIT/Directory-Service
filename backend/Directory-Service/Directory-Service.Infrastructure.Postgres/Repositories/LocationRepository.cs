@@ -53,24 +53,29 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
         return location.Id.Value;
     }
 
-    public async Task<Result<Location, Error>> GetLocationByIdAsync(LocationId locationId, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<Guid> locationsId, CancellationToken cancellationToken)
     {
         try
         {
-            var location = await dbContext.Locations
-                .Where(l => l.Id == locationId).FirstOrDefaultAsync(cancellationToken);
-
-            if (location is null)
+            var locations = await dbContext.Locations
+                .Where(l => locationsId.Contains(l.Id.Value))
+                .ToListAsync(cancellationToken);
+            
+            var foundIds = locations.Select(l => l.Id.Value).ToHashSet();
+            
+            var notFoundedLocationIds = locationsId.Except(foundIds).ToList();
+            
+            if (notFoundedLocationIds.Any())
             {
-                logger.LogError("Location with id {locationId} not found", locationId.Value);
-                return GeneralErrors.NotFounded(locationId.Value);
+                logger.LogError("Location with id {locationId} not found", notFoundedLocationIds);
+                return GeneralErrors.DatabaseError();
             }
             
-            return location;
+            return foundIds;
         }
         catch (Exception exception)
         {
-            logger.LogError(exception, "This location not founded in database by Id: {id}", locationId.Value);
+            logger.LogError(exception, "When querying, there are identifiers that are not in the database");
             return GeneralErrors.DatabaseError();
         }
     }
