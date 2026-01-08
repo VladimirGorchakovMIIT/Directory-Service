@@ -77,4 +77,33 @@ public class DepartmentRepository : IDepartmentRepository
             return GeneralErrors.OperationCancelled();
         }
     }
+    
+    public async Task<Result<Department, Error>> GetByIdIncludeDepartmentLocation(DepartmentId departmentId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var department = await _context.Departments
+                .Where(d => d.DepartmentId == departmentId)
+                .Include(d => d.DepartmentLocations)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (department is null)
+            {
+                _logger.LogError("Department with id {departmentId} not found", departmentId.Value);
+                return GeneralErrors.NotFounded(departmentId.Value);
+            }
+
+            return department;
+        }
+        catch (TaskCanceledException exception)
+        {
+            _logger.LogError(exception, "Operation canceled while creating department with name {name}", departmentId.Value);
+            return GeneralErrors.OperationCancelled();
+        }
+    }
+
+    public async Task Save(CancellationToken cancellationToken)
+    {
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
