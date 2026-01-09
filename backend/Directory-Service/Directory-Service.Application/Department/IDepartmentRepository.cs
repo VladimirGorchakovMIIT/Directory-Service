@@ -8,4 +8,6 @@ public interface IDepartmentRepository
 {
     Task<Result<Guid, Error>> Create(DomainDepartment department, CancellationToken cancellationToken);
     Task<Result<DomainDepartment, Error>> GetById(DepartmentId departmentId, CancellationToken cancellationToken);
+    Task<Result<DomainDepartment, Error>> GetByIdIncludeDepartmentLocation(DepartmentId departmentId, CancellationToken cancellationToken);
+    Task Save(CancellationToken cancellationToken);
 }
