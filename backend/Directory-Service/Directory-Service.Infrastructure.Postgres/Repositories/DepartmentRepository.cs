@@ -26,8 +26,6 @@ public class DepartmentRepository : IDepartmentRepository
         try
         {
             await _context.Departments.AddAsync(department, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
             return department.DepartmentId.Value;
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
@@ -51,8 +49,6 @@ public class DepartmentRepository : IDepartmentRepository
             _logger.LogError(exception, "Operation canceled while creating department with name {name}", department.DepartmentName.Value);
             return GeneralErrors.OperationCancelled();
         }
-
-        return department.DepartmentId.Value;
     }
 
     public async Task<Result<Department, Error>> GetById(DepartmentId departmentId, CancellationToken cancellationToken)

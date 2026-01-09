@@ -20,7 +20,6 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
         try
         {
             await dbContext.Locations.AddAsync(location, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
