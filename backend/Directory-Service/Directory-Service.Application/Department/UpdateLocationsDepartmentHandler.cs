@@ -3,6 +3,7 @@ using Directory_Service.Application.Extensions;
 using Directory_Service.Application.Location;
 using Directory_Service.Application.Validators;
 using Directory_Service.Domain.Department.ValueObjects;
+using Directory_Service.Domain.Location.ValueObjects;
 using Directory_Service.Shared.Errors;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,10 @@ public class UpdateLocationsDepartmentHandler
     private readonly IValidator<UpdateLocationsDepartmentCommand> _validator;
     private readonly ILogger<UpdateLocationsDepartmentHandler> _logger;
 
-    public UpdateLocationsDepartmentHandler(IValidator<UpdateLocationsDepartmentCommand> validator, ILogger<UpdateLocationsDepartmentHandler> logger, IDepartmentRepository departmentRepository, ILocationRepository locationRepository)
+    public UpdateLocationsDepartmentHandler(IValidator<UpdateLocationsDepartmentCommand> validator, 
+        ILogger<UpdateLocationsDepartmentHandler> logger, 
+        IDepartmentRepository departmentRepository, 
+        ILocationRepository locationRepository)
     {
         _validator = validator;
         _logger = logger;
@@ -47,7 +51,7 @@ public class UpdateLocationsDepartmentHandler
             return validationResult.ToErrors();
         }
         
-        var departmentResult = await _departmentRepository.GetByIdIncludeDepartmentLocation(new DepartmentId(command.DepartmentId), cancellationToken);
+        var departmentResult = await _departmentRepository.GetByIdIncludeLocation(new DepartmentId(command.DepartmentId), cancellationToken);
         if (departmentResult.IsFailure)
         {
             _logger.LogError("Not founded department from database by id: {departmentId}", command.DepartmentId);
@@ -55,7 +59,9 @@ public class UpdateLocationsDepartmentHandler
         }
         
         //Метод DoesItExistLocationId проверяет список Guid локаций на их существование в базе данных
-        var locationsIdsResult = await _locationRepository.DoesItExistLocationId(command.LocationsIds, cancellationToken);
+
+        var tempLocationsIds = command.LocationsIds.Select(l => new LocationId(l));
+        var locationsIdsResult = await _locationRepository.DoesItExistLocationId(tempLocationsIds, cancellationToken);
         if (locationsIdsResult.IsFailure)
         {
             _logger.LogError("Non-existent location IDs found");
@@ -65,7 +71,10 @@ public class UpdateLocationsDepartmentHandler
         var locationsIds = locationsIdsResult.Value;
         
         var department = departmentResult.Value;
-        department.UpdateDepartmentLocations(DepartmentDomain.LinkDepartmentLocations(locationsIds, command.DepartmentId));
+        
+        var updatedResult = department.UpdateDepartmentLocations(DepartmentDomain.LinkDepartmentLocations(locationsIds, command.DepartmentId));
+        if(updatedResult.IsFailure)
+            return updatedResult.Error.ToErrors();
         
         await _departmentRepository.Save(cancellationToken);
 

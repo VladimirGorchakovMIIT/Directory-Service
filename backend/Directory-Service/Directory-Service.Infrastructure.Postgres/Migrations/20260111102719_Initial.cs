@@ -11,6 +11,9 @@ namespace Directory_Service.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:ltree", ",,");
+
             migrationBuilder.CreateTable(
                 name: "department",
                 columns: table => new
@@ -18,9 +21,8 @@ namespace Directory_Service.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     identifier = table.Column<string>(type: "text", nullable: false),
-                    ParentDepartmentId = table.Column<Guid>(type: "uuid", nullable: true),
                     parent_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    path = table.Column<string>(type: "text", nullable: false),
+                    path = table.Column<string>(type: "ltree", nullable: false),
                     depth = table.Column<int>(type: "integer", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -29,11 +31,6 @@ namespace Directory_Service.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_department", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_department_department_ParentDepartmentId",
-                        column: x => x.ParentDepartmentId,
-                        principalTable: "department",
-                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_department_department_parent_id",
                         column: x => x.parent_id,
@@ -137,11 +134,6 @@ namespace Directory_Service.Infrastructure.Migrations
                 name: "IX_department_parent_id",
                 table: "department",
                 column: "parent_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_department_ParentDepartmentId",
-                table: "department",
-                column: "ParentDepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_department_location_DepartmentId",

@@ -1,8 +1,12 @@
 ﻿using CSharpFunctionalExtensions;
+using Dapper;
+using Directory_Service.Application.Database;
 using Directory_Service.Application.Department;
 using Directory_Service.Domain.Department;
 using Directory_Service.Domain.Department.ValueObjects;
 using Directory_Service.Infrastructure.Configurations;
+using Directory_Service.Infrastructure.Database;
+using Directory_Service.Shared;
 using Directory_Service.Shared.Errors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,6 +30,8 @@ public class DepartmentRepository : IDepartmentRepository
         try
         {
             await _context.Departments.AddAsync(department, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
             return department.DepartmentId.Value;
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
@@ -73,8 +79,23 @@ public class DepartmentRepository : IDepartmentRepository
             return GeneralErrors.OperationCancelled();
         }
     }
-    
-    public async Task<Result<Department, Error>> GetByIdIncludeDepartmentLocation(DepartmentId departmentId, CancellationToken cancellationToken)
+
+    public async Task<Result<Department, Error>> GetByIdWithLock(DepartmentId departmentId, CancellationToken cancellationToken)
+    {
+        var department = await _context.Departments
+            .FromSql($"select * from department where id = {departmentId} for update")
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (department is null)
+        {
+            _logger.LogError("Department with id {departmentId} not found", departmentId.Value);
+            return GeneralErrors.NotFounded(departmentId.Value);
+        }
+
+        return department;
+    }
+
+    public async Task<Result<Department, Error>> GetByIdIncludeLocation(DepartmentId departmentId, CancellationToken cancellationToken)
     {
         try
         {
@@ -96,6 +117,93 @@ public class DepartmentRepository : IDepartmentRepository
             _logger.LogError(exception, "Operation canceled while creating department with name {name}", departmentId.Value);
             return GeneralErrors.OperationCancelled();
         }
+    }
+
+    public async Task<UnitResult<Error>> ChangeSubtree(string oldPath, string newPath, ITransactionScope transactionScope, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var completed = await _context.Database.ExecuteSqlRawAsync(ConstantsSql.DAPPER_SQL, [
+                    new NpgsqlParameter("@newPath", newPath),
+                    new NpgsqlParameter("@updateDepthPath", newPath),
+                    new NpgsqlParameter("@oldPath", oldPath)
+                ],
+                cancellationToken);
+
+            if (completed is 0)
+            {
+                _logger.LogError("Не удалось обновить структуру и глубину департамента");
+
+                transactionScope.Rollback();
+
+                return GeneralErrors.DatabaseError();
+            }
+
+            return UnitResult.Success<Error>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Не удалось переместить подразделение в указанную структуру так, как блокируется другим процессом");
+            return transactionScope.Rollback();
+        }
+    }
+
+    public async Task<Result<List<DepartmentDto>>> GetHierarchyRecursive(string rootPath, CancellationToken cancellationToken)
+    {
+        const string dapperSql = """
+                                 with recursive dept_three as (
+                                     select d.*, 0 as level
+                                     from department d
+                                     where d.path = @rootPath::ltree
+                                     union all
+                                     select c.*, dt.level + 1
+                                     from department c
+                                     join dept_three dt on c.parent_id = dt.id)
+                                 select id,
+                                     parent_id as ParentId,
+                                     identifier,
+                                     path,
+                                     depth,
+                                     name,
+                                     is_active,
+                                     created_at as CreatedAt,
+                                     updated_at as UpdatedAt,
+                                     level
+                                 from dept_three
+                                 order by level, id
+                                 """;
+
+        var dbConnection = _context.Database.GetDbConnection();
+
+        var departmentRaws = (await dbConnection.QueryAsync<DepartmentDto>(dapperSql, new { rootPath })).ToList();
+
+        var departmentsDict = departmentRaws.ToDictionary(d => d.Id);
+        var roots = new List<DepartmentDto>();
+
+        foreach (var row in departmentRaws)
+        {
+            if (row.ParentId.HasValue && departmentsDict.TryGetValue(row.ParentId.Value, out var parent))
+                parent.Children.Add(departmentsDict[row.Id]);
+            else
+                roots.Add(departmentsDict[row.Id]);
+        }
+
+        return roots;
+    }
+
+    public async Task<UnitResult<Error>> LockDescendants(string oldPath, CancellationToken cancellationToken)
+    {
+        var listPath = await _context.Departments
+            .FromSql($"select d.path from department where d.path <@ {oldPath::ltree} for update")
+            .ToListAsync(cancellationToken);
+
+        if (!listPath.Any())
+        {
+            _logger.LogError("There are no child elements in this path: {path}", oldPath);
+            return GeneralErrors.NotFounded(oldPath);
+        }
+        
+        return UnitResult.Success<Error>();
     }
 
     public async Task Save(CancellationToken cancellationToken)

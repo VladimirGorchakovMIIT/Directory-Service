@@ -38,6 +38,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         
         builder.Property(d => d.Path)
             .HasConversion(d => d.Value, d => new Path(d))
+            .HasColumnType("ltree")
             .HasColumnName("path");
         
         builder.Property(d => d.IsActive).HasColumnName("is_active");
@@ -46,6 +47,8 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         
         builder.Property(d => d.UpdatedAt).HasColumnName("updated_at");
 
+        builder.HasIndex(d => d.Path).HasMethod("gist").HasDatabaseName("idx_department_path");
+        
         builder.HasMany(d => d.ChildrenDepartments)
             .WithOne()
             .IsRequired(false)

@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Data;
+using CSharpFunctionalExtensions;
 using Directory_Service.Application.Database;
 using Directory_Service.Application.Extensions;
 using Directory_Service.Domain.Position.ValueObjects;
@@ -44,7 +45,7 @@ public class CreatePositionHandler
         
         var departmentsPosition = DomainPosition.LinkDepartmentPosition(command.DepartmentIds, positionId);
         
-        var transactionScopeResult = await _transactionManager.BeginTransactionAsync(cancellationToken);
+        var transactionScopeResult = await _transactionManager.BeginTransactionAsync(cancellationToken, IsolationLevel.RepeatableRead);
         if (transactionScopeResult.IsFailure)
         {
             _logger.LogError("Transaction failed with an error @{errors}", transactionScopeResult.Error);

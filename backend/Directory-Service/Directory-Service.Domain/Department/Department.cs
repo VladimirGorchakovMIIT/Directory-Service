@@ -61,9 +61,18 @@ public sealed class Department
 
     public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
 
-    public void UpdateDepartmentLocations(IEnumerable<DepartmentLocation> departmentLocation) => 
-        _departmentLocations = departmentLocation.ToList();
-    
+    public Result<IEnumerable<DepartmentLocation>, Error> UpdateDepartmentLocations(IEnumerable<DepartmentLocation> departmentLocation)
+    {
+        var departmentLocations = departmentLocation as DepartmentLocation[] ?? departmentLocation.ToArray();
+
+        if (!departmentLocations.Any())
+            return GeneralErrors.Failure("Department locations cannot be null.");
+            
+        _departmentLocations = departmentLocations.ToList();
+
+        return _departmentLocations;
+    }
+
     public static IReadOnlyList<DepartmentLocation> LinkDepartmentLocations(IEnumerable<Guid> locationIds, Guid departmentId)
     {
         List<DepartmentLocation> departmentLocations = [];

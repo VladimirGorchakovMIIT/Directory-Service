@@ -1,6 +1,8 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Data;
+using CSharpFunctionalExtensions;
 using Directory_Service.Application.Database;
 using Directory_Service.Shared.Errors;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
@@ -12,18 +14,18 @@ public class TransactionManager : ITransactionManager
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<TransactionManager> _logger;
     
-    public TransactionManager(ApplicationDbContext dbContext, ILogger<TransactionManager> logger, LoggerFactory loggerFactory)
+    public TransactionManager(ApplicationDbContext dbContext, ILogger<TransactionManager> logger, ILoggerFactory loggerFactory)
     {
         _dbContext = dbContext;
         _loggerFactory = loggerFactory;
         _logger = logger;
     }
 
-    public async Task<Result<ITransactionScope, Error>> BeginTransactionAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<ITransactionScope, Error>> BeginTransactionAsync(CancellationToken cancellationToken, IsolationLevel level)
     {
         try
         {
-            var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+            var transaction = await _dbContext.Database.BeginTransactionAsync(level, cancellationToken);
             var logger = _loggerFactory.CreateLogger<TransactionScope>();
             
             var transactionScoped = new TransactionScope(transaction.GetDbTransaction(), logger);
@@ -42,7 +44,6 @@ public class TransactionManager : ITransactionManager
         try
         {
             await _dbContext.SaveChangesAsync();
-
             return UnitResult.Success<Error>();
         }
         catch (Exception ex)

@@ -51,7 +51,7 @@ public class CreateLocationHandler
         await _locationRepository.CreateAsync(location, cancellationToken);
         
         _logger.LogInformation("Created location. Id Entity location: {idLocation}", locationId);
-
+        
         return locationId;
     }
 }

@@ -46,8 +46,10 @@ public class CreateDepartmentHandler
         var departmentId = Guid.NewGuid();
         var departmentName = DepartmentName.Create(command.DepartmentName).Value;
         var identifier = Identifier.Create(command.Identifier).Value;
+
+        var locationsIds = command.LocationsId.Select(l => new LocationId(l));
         
-        var locationResult = await _locationRepository.DoesItExistLocationId(command.LocationsId, cancellationToken);
+        var locationResult = await _locationRepository.DoesItExistLocationId(locationsIds, cancellationToken);
 
         if (locationResult.IsFailure)
             return locationResult.Error.ToErrors();
