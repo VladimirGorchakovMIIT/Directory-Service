@@ -32,7 +32,7 @@ public class DepartmentsController : ControllerBase
 
     [HttpPut("{departmentId:guid}/parent")]
     public async Task<EndpointResult<Guid>> Change(
-        [FromServices] ChangeDepartmentHandler handler,
+        [FromServices] MoveDepartmentHandler handler,
         [FromRoute] Guid departmentId,
         [FromQuery] Guid parentId,
         CancellationToken cancellationToken)

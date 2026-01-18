@@ -18,8 +18,6 @@ public interface IDepartmentRepository
     
     Task<UnitResult<Error>> LockDescendants(string oldPath, CancellationToken cancellationToken);
     
-    Task<Result<List<DepartmentDto>>> GetHierarchyRecursive(string rootPath, CancellationToken cancellationToken);
-    
     Task<UnitResult<Error>> ChangeSubtree(string subPath, string rootPath, ITransactionScope transactionScope, CancellationToken cancellationToken);
     
     Task Save(CancellationToken cancellationToken);

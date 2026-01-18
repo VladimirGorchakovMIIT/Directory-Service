@@ -9,13 +9,13 @@ namespace Directory_Service.Application.Department;
 
 public record ChangeDepartmentCommand(Guid ParentId, Guid SubscribeId);
 
-public class ChangeDepartmentHandler
+public class MoveDepartmentHandler
 {
     private readonly ITransactionManager _transactionManager;
     private readonly IDepartmentRepository _departmentRepository;
-    private readonly ILogger<ChangeDepartmentHandler> _logger;
+    private readonly ILogger<MoveDepartmentHandler> _logger;
 
-    public ChangeDepartmentHandler(ITransactionManager transactionManager, IDepartmentRepository departmentRepository, ILogger<ChangeDepartmentHandler> logger)
+    public MoveDepartmentHandler(ITransactionManager transactionManager, IDepartmentRepository departmentRepository, ILogger<MoveDepartmentHandler> logger)
     {
         _transactionManager = transactionManager;
         _departmentRepository = departmentRepository;

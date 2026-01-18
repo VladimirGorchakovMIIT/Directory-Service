@@ -148,49 +148,6 @@ public class DepartmentRepository : IDepartmentRepository
         }
     }
 
-    public async Task<Result<List<DepartmentDto>>> GetHierarchyRecursive(string rootPath, CancellationToken cancellationToken)
-    {
-        const string dapperSql = """
-                                 with recursive dept_three as (
-                                     select d.*, 0 as level
-                                     from department d
-                                     where d.path = @rootPath::ltree
-                                     union all
-                                     select c.*, dt.level + 1
-                                     from department c
-                                     join dept_three dt on c.parent_id = dt.id)
-                                 select id,
-                                     parent_id as ParentId,
-                                     identifier,
-                                     path,
-                                     depth,
-                                     name,
-                                     is_active,
-                                     created_at as CreatedAt,
-                                     updated_at as UpdatedAt,
-                                     level
-                                 from dept_three
-                                 order by level, id
-                                 """;
-
-        var dbConnection = _context.Database.GetDbConnection();
-
-        var departmentRaws = (await dbConnection.QueryAsync<DepartmentDto>(dapperSql, new { rootPath })).ToList();
-
-        var departmentsDict = departmentRaws.ToDictionary(d => d.Id);
-        var roots = new List<DepartmentDto>();
-
-        foreach (var row in departmentRaws)
-        {
-            if (row.ParentId.HasValue && departmentsDict.TryGetValue(row.ParentId.Value, out var parent))
-                parent.Children.Add(departmentsDict[row.Id]);
-            else
-                roots.Add(departmentsDict[row.Id]);
-        }
-
-        return roots;
-    }
-
     public async Task<UnitResult<Error>> LockDescendants(string oldPath, CancellationToken cancellationToken)
     {
         var listPath = await _context.Departments
