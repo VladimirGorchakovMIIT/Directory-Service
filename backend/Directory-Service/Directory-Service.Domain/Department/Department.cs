@@ -9,9 +9,9 @@ namespace Directory_Service.Domain.Department;
 
 public sealed class Department
 {
-    private readonly List<Department> _childrenDepartments = [];
-    private readonly List<DepartmentPosition> _departmentPositions = [];
-    private readonly List<DepartmentLocation> _departmentLocations = [];
+    private List<Department> _childrenDepartments = [];
+    private List<DepartmentPosition> _departmentPositions = [];
+    private List<DepartmentLocation> _departmentLocations = [];
 
     private Department()
     {
@@ -43,9 +43,6 @@ public sealed class Department
 
     public Identifier Identifier { get; private set; }
 
-    //Удалить после проведенной проверки
-    public Department? Parent { get; private set; }
-
     public DepartmentId? ParentId { get; private set; }
 
     public Path Path { get; private set; }
@@ -63,6 +60,18 @@ public sealed class Department
     public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
 
     public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
+
+    public Result<IEnumerable<DepartmentLocation>, Error> UpdateDepartmentLocations(IEnumerable<DepartmentLocation> departmentLocation)
+    {
+        var departmentLocations = departmentLocation as DepartmentLocation[] ?? departmentLocation.ToArray();
+
+        if (!departmentLocations.Any())
+            return GeneralErrors.Failure("Department locations cannot be null.");
+            
+        _departmentLocations = departmentLocations.ToList();
+
+        return _departmentLocations;
+    }
 
     public static IReadOnlyList<DepartmentLocation> LinkDepartmentLocations(IEnumerable<Guid> locationIds, Guid departmentId)
     {
@@ -109,6 +118,4 @@ public sealed class Department
 
         return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, parent.Depth + 1, departmentLocations, parent.DepartmentId);
     }
-    
-    
 }

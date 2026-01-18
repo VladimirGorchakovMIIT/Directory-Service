@@ -1,7 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using Directory_Service.Application.Position;
 using Directory_Service.Domain.Position;
+using Directory_Service.Infrastructure.Database;
 using Directory_Service.Shared.Errors;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Directory_Service.Infrastructure.Repositories;
@@ -22,8 +24,6 @@ public class PositionRepository : IPositionRepository
         try
         {
             await _dbContext.Positions.AddAsync(position, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
             return position.Id.Value;
         }
         catch (TaskCanceledException exception)

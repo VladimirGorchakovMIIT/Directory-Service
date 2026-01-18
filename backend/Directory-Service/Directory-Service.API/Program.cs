@@ -26,3 +26,8 @@ app.UseSerilogRequestLogging();
 
 app.MapControllers();
 app.Run();
+
+namespace DirectoryService.API
+{
+    public partial class Program;
+}

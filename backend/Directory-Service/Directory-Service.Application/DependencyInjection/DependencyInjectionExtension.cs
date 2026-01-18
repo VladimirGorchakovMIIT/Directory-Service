@@ -13,7 +13,11 @@ public static class DependencyInjectionExtension
         services.AddValidatorsFromAssembly(typeof(DependencyInjectionExtension).Assembly);
         
         services.AddScoped<CreateLocationHandler>();
+        
         services.AddScoped<CreateDepartmentHandler>();
+        services.AddScoped<MoveDepartmentHandler>();
+        services.AddScoped<UpdateLocationsDepartmentHandler>();
+        
         services.AddScoped<CreatePositionHandler>();
         
         return services;

@@ -11,7 +11,7 @@ public interface ILocationRepository
 {
     Task<Result<Guid, Error>> CreateAsync(LocationDomain location, CancellationToken cancellationToken);
     
-    Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<Guid> locationsId, CancellationToken cancellationToken);
+    Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<LocationId> locationsId, CancellationToken cancellationToken);
     
     
 }

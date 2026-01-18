@@ -3,6 +3,7 @@ using Directory_Service.Application.Location;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Domain.Location;
 using Directory_Service.Domain.Location.ValueObjects;
+using Directory_Service.Infrastructure.Database;
 using Directory_Service.Infrastructure.Extensions;
 using Directory_Service.Shared;
 using Directory_Service.Shared.Errors;
@@ -53,16 +54,16 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
         return location.Id.Value;
     }
 
-    public async Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<Guid> locationsId, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<Guid>, Error>> DoesItExistLocationId(IEnumerable<LocationId> locationsId, CancellationToken cancellationToken)
     {
         try
         {
             var locations = await dbContext.Locations
-                .Where(l => locationsId.Contains(l.Id.Value))
+                .Where(l => locationsId.Contains(l.Id))
                 .ToListAsync(cancellationToken);
             
-            var foundIds = locations.Select(l => l.Id.Value).ToHashSet();
-            
+            var foundIds = locations.Select(l => l.Id).ToHashSet();
+
             var notFoundedLocationIds = locationsId.Except(foundIds).ToList();
             
             if (notFoundedLocationIds.Any())
@@ -71,7 +72,9 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
                 return GeneralErrors.DatabaseError();
             }
             
-            return foundIds;
+            var guidLocations = locations.Select(l => l.Id.Value).ToList();
+            
+            return guidLocations;
         }
         catch (Exception exception)
         {

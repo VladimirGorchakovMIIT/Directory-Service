@@ -26,7 +26,7 @@ public static class CustomValidators
         return ruleBuilder.Custom((collections, context) =>
         {
             if(collections is null)
-                context.AddFailure(JsonSerializer.Serialize(GeneralErrors.ValueIsInvalid("The 'PositionsId' can`t be empty ")));
+                context.AddFailure(JsonSerializer.Serialize(GeneralErrors.ValueIsInvalid("The 'PositionsId' array can`t be empty ")));
 
             var duplicates = new HashSet<TProperty>();
 
