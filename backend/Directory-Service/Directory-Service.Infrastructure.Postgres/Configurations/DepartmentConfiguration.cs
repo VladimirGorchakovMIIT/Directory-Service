@@ -16,11 +16,11 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
     public void Configure(EntityTypeBuilder<Department> builder)
     {
         builder.ToTable("department");
-        builder.HasKey(x => x.DepartmentId).HasName("pk_department");
+        builder.HasKey(x => x.Id).HasName("pk_department");
 
         builder.Property(x => x.Depth).HasColumnName("depth"); 
         
-        builder.Property(x => x.DepartmentId)
+        builder.Property(x => x.Id)
             .HasConversion(d => d.Value, d => new DepartmentId(d))
             .HasColumnName("id");
         

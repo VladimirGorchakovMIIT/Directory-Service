@@ -32,7 +32,7 @@ public class DepartmentRepository : IDepartmentRepository
             await _context.Departments.AddAsync(department, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return department.DepartmentId.Value;
+            return department.Id.Value;
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
@@ -62,7 +62,7 @@ public class DepartmentRepository : IDepartmentRepository
         try
         {
             var department = await _context.Departments
-                .Where(d => d.DepartmentId == departmentId)
+                .Where(d => d.Id == departmentId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (department is null)
@@ -83,7 +83,7 @@ public class DepartmentRepository : IDepartmentRepository
     public async Task<Result<Department, Error>> GetByIdWithLock(DepartmentId departmentId, CancellationToken cancellationToken)
     {
         var department = await _context.Departments
-            .FromSql($"select * from department where id = {departmentId} for update")
+            .FromSql($"select * from department where id = {departmentId.Value} for update")
             .FirstOrDefaultAsync(cancellationToken);
 
         if (department is null)
@@ -100,7 +100,7 @@ public class DepartmentRepository : IDepartmentRepository
         try
         {
             var department = await _context.Departments
-                .Where(d => d.DepartmentId == departmentId)
+                .Where(d => d.Id == departmentId)
                 .Include(d => d.DepartmentLocations)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -151,7 +151,7 @@ public class DepartmentRepository : IDepartmentRepository
     public async Task<UnitResult<Error>> LockDescendants(string oldPath, CancellationToken cancellationToken)
     {
         var listPath = await _context.Departments
-            .FromSql($"select d.path from department where d.path <@ {oldPath::ltree} for update")
+            .FromSqlInterpolated($"select * from department where path <@ {oldPath}::ltree for update")
             .ToListAsync(cancellationToken);
 
         if (!listPath.Any())

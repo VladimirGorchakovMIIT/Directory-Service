@@ -78,6 +78,6 @@ public class UpdateLocationsDepartmentHandler
         
         await _departmentRepository.Save(cancellationToken);
 
-        return department.DepartmentId.Value;
+        return department.Id.Value;
     }
 }

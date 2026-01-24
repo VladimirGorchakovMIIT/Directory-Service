@@ -9,9 +9,7 @@ public class Location
 {
     private readonly List<DepartmentLocation> _departmentsLocations = [];
     
-    private Location()
-    {
-    }
+    private Location() { }
 
     private Location(LocationId id, Name name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments)
     {

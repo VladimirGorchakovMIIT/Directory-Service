@@ -80,6 +80,6 @@ public class CreateDepartmentHandler
 
         await _departmentRepository.Create(departmentResult.Value, cancellationToken);
 
-        return Guid.NewGuid();
+        return departmentId;
     }
 }

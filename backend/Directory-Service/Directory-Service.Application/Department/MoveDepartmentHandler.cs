@@ -34,14 +34,14 @@ public class MoveDepartmentHandler
         if(parentResult.IsFailure)
             return parentResult.Error.ToErrors();
         
-        var childResult = await _departmentRepository.GetByIdWithLock(new DepartmentId(command.ParentId), cancellationToken);
+        var childResult = await _departmentRepository.GetByIdWithLock(new DepartmentId(command.SubscribeId), cancellationToken);
         if (childResult.IsFailure)
             return childResult.Error.ToErrors();
         
         var departmentParent = parentResult.Value;
         var departmentSubscribe  = childResult.Value;
         
-        if (departmentParent.DepartmentId.Value.Equals(departmentSubscribe.DepartmentId.Value))
+        if (departmentParent.Id.Value.Equals(departmentSubscribe.Id.Value))
         {
             transactionScope.Rollback();
             _logger.LogError("You can't choose yourself with id: {department} was already added", command.SubscribeId);
@@ -57,6 +57,6 @@ public class MoveDepartmentHandler
         transactionScope.Commit();
         await _transactionManager.SaveChangesAsync();
 
-        throw new NotImplementedException();
+        return departmentParent.Id.Value;
     }
 }
