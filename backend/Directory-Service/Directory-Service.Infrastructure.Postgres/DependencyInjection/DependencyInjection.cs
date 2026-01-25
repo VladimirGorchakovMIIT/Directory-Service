@@ -15,18 +15,36 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructurePostgres(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString("ApplicationDbContext"));
-            options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
-        });
-
+        ConnectingToDatabasePostgresSql(services, configuration);
+        
         services.AddScoped<ITransactionManager, TransactionManager>();
 
         services.AddScoped<ILocationRepository, LocationRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IPositionRepository, PositionRepository>();
 
+        return services;
+    }
+
+    private static IServiceCollection ConnectingToDatabasePostgresSql(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("ApplicationDbContext"));
+            options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+        });
+        
+        return services;
+    }
+    
+    public static IServiceCollection ConnectingToDatabasePostgresSqlForTestContainer(this IServiceCollection services, string connectionString)
+    {
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString);
+            options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+        });
+        
         return services;
     }
 }

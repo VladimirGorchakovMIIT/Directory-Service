@@ -18,7 +18,7 @@ public sealed class Department
     }
 
     private Department(
-        DepartmentId departmentId,
+        DepartmentId id,
         DepartmentName departmentName,
         Identifier identifier,
         Path path,
@@ -26,7 +26,7 @@ public sealed class Department
         IEnumerable<DepartmentLocation> departmentLocations,
         DepartmentId parentDepartmentId)
     {
-        DepartmentId = departmentId;
+        Id = id;
         ParentId = parentDepartmentId;
         DepartmentName = departmentName;
         Identifier = identifier;
@@ -37,7 +37,7 @@ public sealed class Department
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public DepartmentId DepartmentId { get; private set; }
+    public DepartmentId Id { get; private set; }
 
     public DepartmentName DepartmentName { get; private set; }
 
@@ -116,6 +116,6 @@ public sealed class Department
         
         var path = parent.Path.CreateChild(identifier);
 
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, parent.Depth + 1, departmentLocations, parent.DepartmentId);
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), departmentName, identifier, path, parent.Depth + 1, departmentLocations, parent.Id);
     }
 }
