@@ -62,7 +62,7 @@ public class GetLocationsWithPaginationAndFilterHandler
             IsActive = l.IsActive,
             CreatedAt = l.CreatedAt,
             UpdatedAt = l.UpdatedAt
-        }).ToListAsync(cancellationToken);
+        }).OrderBy(l => l.Name).ThenBy(l=> l.CreatedAt).ToListAsync(cancellationToken);
 
         return locations;
     }
