@@ -1,4 +1,5 @@
 ﻿using Directory_Service.Application.Location;
+using Directory_Service.Application.Location.Queries;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Core.Endpoints;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,15 @@ public class LocationController : ControllerBase
     public async Task<EndpointResult<Guid>> Create(
         [FromBody] CreateLocationCommand command,
         [FromServices] CreateLocationHandler handler,
+        CancellationToken cancellationToken)
+    {
+        return await handler.Handle(command, cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<EndpointResult<IEnumerable<LocationDto>>> GetAllWithPaginationAndFilter(
+        [FromServices] GetLocationsWithPaginationAndFilterHandler handler,
+        [FromQuery] GetLocationsWithPaginationAndFilterCommand command,
         CancellationToken cancellationToken)
     {
         return await handler.Handle(command, cancellationToken);

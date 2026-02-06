@@ -62,7 +62,7 @@ public class CreateDepartmentHandler
         }
         else if (command.ParentId is not null)
         {
-            var result = await _departmentRepository.GetById(new DepartmentId(command.ParentId.Value), cancellationToken);
+            var result = await _departmentRepository.GetByIdAsync(new DepartmentId(command.ParentId.Value), cancellationToken);
             if (result.IsFailure)
             {
                 _logger.LogError("Couldn't create department");

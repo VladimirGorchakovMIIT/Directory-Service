@@ -32,11 +32,6 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         {
             nb.ToJson();
             
-            // nb.HasIndex(x => x.Building).IsUnique().HasDatabaseName(Index.BUILDING);
-            // nb.HasIndex(x => x.City).IsUnique().HasDatabaseName(Index.CITY);
-            // nb.HasIndex(x => x.Flat).IsUnique().HasDatabaseName(Index.FLAT);
-            // nb.HasIndex(x => x.Street).IsUnique().HasDatabaseName(Index.STREET);
-            
             nb.Property(x => x.Building).IsRequired().HasColumnName("building");
             nb.Property(x => x.City).IsRequired().HasColumnName("city");
             nb.Property(x => x.Flat).IsRequired().HasColumnName("flat");

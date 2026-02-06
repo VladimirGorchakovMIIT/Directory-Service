@@ -1,4 +1,4 @@
-﻿using Directory_Service.Application.Database;
+using Directory_Service.Application.Database;
 using Directory_Service.Application.Department;
 using Directory_Service.Application.Location;
 using Directory_Service.Application.Position;
@@ -19,9 +19,15 @@ public static class DependencyInjection
         
         services.AddScoped<ITransactionManager, TransactionManager>();
 
+        services.AddScoped<IDbConnectionFactory, NpgsqlConnectionFactory>(_ => 
+            new NpgsqlConnectionFactory(configuration.GetConnectionString("ApplicationDbContext") ?? 
+                throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;//Позволяет сопоставлять поля с подчёркиваниями в БД и PascalCase‑свойства
+        
         services.AddScoped<ILocationRepository, LocationRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IPositionRepository, PositionRepository>();
+        services.AddScoped<IReadDbContext, ApplicationDbContext>();
 
         return services;
     }
