@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using CSharpFunctionalExtensions;
+using Directory_Service.Application.Abstraction;
 using Directory_Service.Application.Database;
 using Directory_Service.Domain.Department.ValueObjects;
 using Directory_Service.Shared.Errors;
@@ -9,7 +10,7 @@ namespace Directory_Service.Application.Department;
 
 public record ChangeDepartmentCommand(Guid ParentId, Guid SubscribeId);
 
-public class MoveDepartmentHandler
+public class MoveDepartmentHandler : IHandler<ChangeDepartmentCommand, Guid>
 {
     private readonly ITransactionManager _transactionManager;
     private readonly IDepartmentRepository _departmentRepository;

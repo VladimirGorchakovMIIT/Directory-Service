@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Directory_Service.Application.Abstraction;
 using Directory_Service.Application.Extensions;
 using Directory_Service.Application.Location;
 using Directory_Service.Application.Validators;
@@ -11,8 +12,6 @@ using DepartmentDomain = Directory_Service.Domain.Department.Department;
 
 namespace Directory_Service.Application.Department;
 
-public record UpdateLocationsDepartmentCommand(Guid DepartmentId, IEnumerable<Guid> LocationsIds);
-
 public class UpdateLocationsDepartmentValidator : AbstractValidator<UpdateLocationsDepartmentCommand>
 {
     public UpdateLocationsDepartmentValidator()
@@ -23,7 +22,9 @@ public class UpdateLocationsDepartmentValidator : AbstractValidator<UpdateLocati
     }
 }
 
-public class UpdateLocationsDepartmentHandler
+public record UpdateLocationsDepartmentCommand(Guid DepartmentId, IEnumerable<Guid> LocationsIds);
+
+public class UpdateLocationsDepartmentHandler : IHandler<UpdateLocationsDepartmentCommand, Guid>
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILocationRepository _locationRepository;

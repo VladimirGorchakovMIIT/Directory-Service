@@ -2,8 +2,6 @@
 
 public record AddressDto(string Street, string City, int Building, int Flat);
 
-public record GetLocationsDto(List<LocationDto> Locations);
-
 public record LocationDto
 {
     public Guid Id { get; init; }

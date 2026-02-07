@@ -1,5 +1,5 @@
-﻿using Directory_Service.Application.DependencyInjection;
-using Directory_Service.Infrastructure.DependencyInjection;
+﻿using Directory_Service.Application;
+using Directory_Service.Infrastructure;
 using Serilog;
 
 namespace Directory_Service.Core.DependencyInjection;

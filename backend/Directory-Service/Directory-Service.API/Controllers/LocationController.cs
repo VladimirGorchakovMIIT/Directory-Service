@@ -1,4 +1,5 @@
-﻿using Directory_Service.Application.Location;
+﻿using Directory_Service.Application.Abstraction;
+using Directory_Service.Application.Location;
 using Directory_Service.Application.Location.Queries;
 using Directory_Service.Contracts.Location;
 using Directory_Service.Core.Endpoints;
@@ -20,9 +21,9 @@ public class LocationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<EndpointResult<IEnumerable<LocationDto>>> GetAllWithPaginationAndFilter(
-        [FromServices] GetLocationsWithPaginationAndFilterHandler handler,
-        [FromQuery] GetLocationsWithPaginationAndFilterCommand command,
+    public async Task<EndpointResult<GetLocationsDto>> GetAllWithPaginationAndFilter(
+        [FromServices] IQueriesHandler<GetLocationsCommand, GetLocationsDto> handler,
+        [FromQuery] GetLocationsCommand command,
         CancellationToken cancellationToken)
     {
         return await handler.Handle(command, cancellationToken);
