@@ -10,7 +10,7 @@ public interface IDepartmentRepository
 {
     Task<Result<Guid, Error>> Create(DomainDepartment department, CancellationToken cancellationToken);
     
-    Task<Result<DomainDepartment, Error>> GetById(DepartmentId departmentId, CancellationToken cancellationToken);
+    Task<Result<DomainDepartment, Error>> GetByIdAsync(DepartmentId departmentId, CancellationToken cancellationToken);
     
     Task<Result<DomainDepartment, Error>> GetByIdWithLock(DepartmentId departmentId, CancellationToken cancellationToken);
     

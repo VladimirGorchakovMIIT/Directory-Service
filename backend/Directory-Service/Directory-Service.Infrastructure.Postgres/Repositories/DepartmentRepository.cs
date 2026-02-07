@@ -57,11 +57,11 @@ public class DepartmentRepository : IDepartmentRepository
         }
     }
 
-    public async Task<Result<Department, Error>> GetById(DepartmentId departmentId, CancellationToken cancellationToken)
+    public async Task<Result<Department, Error>> GetByIdAsync(DepartmentId departmentId, CancellationToken cancellationToken)
     {
         try
         {
-            var department = await _context.Departments
+            var department = await _context.DepartmentRead
                 .Where(d => d.Id == departmentId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -133,9 +133,7 @@ public class DepartmentRepository : IDepartmentRepository
             if (completed is 0)
             {
                 _logger.LogError("Не удалось обновить структуру и глубину департамента");
-
                 transactionScope.Rollback();
-
                 return GeneralErrors.DatabaseError();
             }
 

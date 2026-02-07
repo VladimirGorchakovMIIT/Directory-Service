@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
+using Directory_Service.Infrastructure;
 using Directory_Service.Infrastructure.Database;
-using Directory_Service.Infrastructure.DependencyInjection;
 using DirectoryService.API;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

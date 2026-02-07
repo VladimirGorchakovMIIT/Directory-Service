@@ -63,7 +63,7 @@ public class DepartmentBaseTest : IClassFixture<DirectoryTestWebFactory>, IAsync
         {
             var location = Location.Create(
                 new LocationId(Guid.NewGuid()),
-                new Name(name),
+                name,
                 new Address(street, city, 123, 33),
                 new Timezone("Europe/Moscow"),
                 false,

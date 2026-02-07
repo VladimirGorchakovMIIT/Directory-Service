@@ -31,8 +31,8 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
                 
                 if (constraintName.Contains(Index.NAME, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    logger.LogError(pgEx, "Название локации должен быть уникальным {name}", location.Name.Value);
-                    return LocationError.NameConflict("name.location.conflict", location.Name.Value);
+                    logger.LogError(pgEx, "Название локации должен быть уникальным {name}", location.Name);
+                    return LocationError.NameConflict("name.location.conflict", location.Name);
                 }
 
                 if (constraintName.Equals(Index.ADDRESS, StringComparison.OrdinalIgnoreCase))
@@ -42,12 +42,12 @@ public class LocationRepository(ApplicationDbContext dbContext, ILogger<Location
                 }
             }
 
-            logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name.Value);
+            logger.LogError(ex, "Database update error while creating location with name {name} because name is unique", location.Name);
             GeneralErrors.DatabaseError();
         }
         catch (OperationCanceledException ex)
         {
-            logger.LogError(ex, "Operation canceled while creating location with name {name}", location.Name.Value);
+            logger.LogError(ex, "Operation canceled while creating location with name {name}", location.Name);
             GeneralErrors.OperationCancelled();
         }
 
