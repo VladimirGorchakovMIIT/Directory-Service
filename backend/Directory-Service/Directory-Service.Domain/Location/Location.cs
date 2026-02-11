@@ -11,7 +11,7 @@ public class Location
     
     private Location() { }
 
-    private Location(LocationId id, Name name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments)
+    private Location(LocationId id, string name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments)
     {
         Id = id;
         Name = name;
@@ -25,7 +25,7 @@ public class Location
 
     public LocationId Id { get; private set; }
 
-    public Name Name { get; private set; }
+    public string Name { get; private set; }
 
     public Address Address { get; private set; }
 
@@ -39,6 +39,6 @@ public class Location
 
     public IReadOnlyList<DepartmentLocation> DepartmentsLocations => _departmentsLocations;
 
-    public static Location Create(LocationId id, Name name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments) =>
+    public static Location Create(LocationId id, string name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments) =>
         new Location(id, name, address, timezone, isActive, departments);
 }

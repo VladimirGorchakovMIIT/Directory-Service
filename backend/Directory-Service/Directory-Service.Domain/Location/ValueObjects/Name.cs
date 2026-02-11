@@ -4,8 +4,15 @@ using Directory_Service.Shared.Errors;
 
 namespace Directory_Service.Domain.Location.ValueObjects;
 
-public record Name(string Value)
+public record Name
 {
+    public Name(string name)
+    {
+        Value = name;
+    }
+    
+    public string Value { get; }
+    
     public static Result<Name, Error> Create(string name)
     {
         if(string.IsNullOrWhiteSpace(name))
