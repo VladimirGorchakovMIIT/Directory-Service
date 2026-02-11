@@ -21,7 +21,7 @@ public class CreateDepartmentRequestValidator : AbstractValidator<CreateDepartme
         RuleFor(dc => dc.DepartmentName)
             .NotEmpty()
             .WithError(Error.ValueIsInvalid("invalid.department.name", "Department name is required", "name"))
-            .Custom((field, dc) =>
+            .MustBeValueObject((field, dc) =>
             {
                 if (field.Length < 3 || field.Length > 150)
                     dc.AddFailure("department name", "Department name must be between 3 and 150 characters");
@@ -30,7 +30,7 @@ public class CreateDepartmentRequestValidator : AbstractValidator<CreateDepartme
         RuleFor(dc => dc.Identifier)
             .NotEmpty()
             .WithError(Error.ValueIsInvalid("invalid.identifier.name", "Identifier name is required", "identifier"))
-            .Custom((field, dc) =>
+            .MustBeValueObject((field, dc) =>
             {
                 if (field.Length < 3 || field.Length > 150)
                     dc.AddFailure("identifier", "Department name must be between 3 and 150 characters");
@@ -84,7 +84,7 @@ public class CreateDepartmentHandler : IHandler<CreateDepartmentCommand, Guid>
         var identifier = Identifier.Create(command.Identifier).Value;
 
         var locationsIds = command.LocationsId.Select(l => new LocationId(l));
-        
+
         var locationResult = await _locationRepository.DoesItExistLocationId(locationsIds, cancellationToken);
 
         if (locationResult.IsFailure)

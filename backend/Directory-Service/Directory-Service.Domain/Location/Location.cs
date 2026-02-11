@@ -9,9 +9,9 @@ public class Location
 {
     private readonly List<DepartmentLocation> _departmentsLocations = [];
     
-    private Location() { }
-
-    private Location(LocationId id, string name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments)
+    private Location(){}
+    
+    public Location(LocationId id, string name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments)
     {
         Id = id;
         Name = name;
@@ -38,7 +38,4 @@ public class Location
     public DateTime UpdatedAt { get; private set; }
 
     public IReadOnlyList<DepartmentLocation> DepartmentsLocations => _departmentsLocations;
-
-    public static Location Create(LocationId id, string name, Address address, Timezone timezone, bool isActive, IEnumerable<DepartmentLocation> departments) =>
-        new Location(id, name, address, timezone, isActive, departments);
 }

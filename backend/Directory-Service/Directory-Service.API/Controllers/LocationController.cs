@@ -21,8 +21,8 @@ public class LocationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<EndpointResult<GetLocationsDto>> GetAllWithPaginationAndFilter(
-        [FromServices] IQueriesHandler<GetLocationsCommand, GetLocationsDto> handler,
+    public async Task<EndpointResult<PaginationResponse<LocationDto>>> GetAllWithPaginationAndFilter(
+        [FromServices] IQueriesHandler<GetLocationsCommand, PaginationResponse<LocationDto>> handler,
         [FromQuery] GetLocationsCommand command,
         CancellationToken cancellationToken)
     {

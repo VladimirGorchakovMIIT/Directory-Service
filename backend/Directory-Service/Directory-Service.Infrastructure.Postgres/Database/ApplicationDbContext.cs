@@ -12,8 +12,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<Department> Departments => Set<Department>();
-
     public DbSet<DepartmentLocation> DepartmentLocations => Set<DepartmentLocation>();
+    
+    public DbSet<DepartmentPosition> DepartmentPositions => Set<DepartmentPosition>();
+
+    public IQueryable<Location> LocationsRead => Locations.AsNoTracking().AsQueryable();
+    public IQueryable<Position> PositionsRead => Positions.AsNoTracking().AsQueryable();
+    public IQueryable<Department> DepartmentRead => Departments.AsNoTracking().AsQueryable();
+    public IQueryable<DepartmentLocation> DepartmentLocationsRead => DepartmentLocations.AsNoTracking().AsQueryable();
+
+    public IQueryable<DepartmentPosition> DepartmentPositionsRead => DepartmentPositions.AsNoTracking().AsQueryable();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,9 +30,4 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     }
 
     public IDbConnection GetConnection(CancellationToken cancellationToken = default) => Database.GetDbConnection();
-
-    public IQueryable<Location> LocationsRead => Locations.AsNoTracking().AsQueryable();
-    public IQueryable<Position> PositionsRead => Positions.AsNoTracking().AsQueryable();
-    public IQueryable<Department> DepartmentRead => Departments.AsNoTracking().AsQueryable();
-    public IQueryable<DepartmentLocation> DepartmentLocationsRead => DepartmentLocations.AsNoTracking().AsQueryable();
 }

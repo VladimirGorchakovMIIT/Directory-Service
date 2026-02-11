@@ -10,9 +10,9 @@ public class Position
 {
     private readonly List<DepartmentPosition> _departmentPosition = [];
     
-    private Position() { }
-
-    private Position(PositionId id, Name name, Description description, IEnumerable<DepartmentPosition> positions)
+    private Position(){}
+    
+    public Position(PositionId id, Name name, Description description, IEnumerable<DepartmentPosition> positions)
     {
         Id = id;
         Name = name;
@@ -35,9 +35,6 @@ public class Position
     public DateTime UpdatedAt { get; private set; }
     
     public IReadOnlyList<DepartmentPosition> DepartmentPosition => _departmentPosition;
-
-    public static Position Create(PositionId id, Name name, Description description, IEnumerable<DepartmentPosition> positions) =>
-        new Position(id, name, description, positions);
 
     public static IEnumerable<DepartmentPosition> LinkDepartmentPosition(IEnumerable<Guid> departmentsIds, Guid positionId)
     {

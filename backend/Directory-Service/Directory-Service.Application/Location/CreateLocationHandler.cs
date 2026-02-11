@@ -63,7 +63,7 @@ public class CreateLocationHandler : IHandler<CreateLocationCommand, Guid>
         var timezoneRequest = request.Timezone;
         var timezoneResult = Timezone.Create(timezoneRequest.Continent, timezoneRequest.City).Value;
         
-        var location = DomainLocation.Create(new LocationId(locationId), nameResult, addressResult, timezoneResult, command.Request.IsActive, []);
+        var location = new DomainLocation(new LocationId(locationId), nameResult, addressResult, timezoneResult, command.Request.IsActive, []);
         
         await _locationRepository.CreateAsync(location, cancellationToken);
         
