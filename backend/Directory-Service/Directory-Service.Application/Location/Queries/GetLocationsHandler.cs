@@ -25,7 +25,7 @@ public class GetLocationsValidator : AbstractValidator<GetLocationsCommand>
 
 public record GetLocationsCommand(IReadOnlyList<Guid>? DepartmentIds, string? Search, bool IsActive, int Page = 1, int PageSize = 20) : ICommand;
 
-public class GetLocationsHandler : IQueriesHandler<GetLocationsCommand, GetLocationsDto>
+public class GetLocationsHandler : IQueriesHandler<GetLocationsCommand, PaginationResponse<LocationDto>>
 {
     private readonly IReadDbContext _readDbContext;
     private readonly IValidator<GetLocationsCommand> _validator;
@@ -40,7 +40,7 @@ public class GetLocationsHandler : IQueriesHandler<GetLocationsCommand, GetLocat
         _readDbContext = readDbContext;
     }
 
-    public async Task<Result<GetLocationsDto, Errors>> Handle(GetLocationsCommand command, CancellationToken cancellationToken)
+    public async Task<Result<PaginationResponse<LocationDto>, Errors>> Handle(GetLocationsCommand command, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
 
@@ -89,9 +89,11 @@ public class GetLocationsHandler : IQueriesHandler<GetLocationsCommand, GetLocat
 
         var totalCount = await locationQuery.CountAsync(cancellationToken);
 
-        return new GetLocationsDto()
+        return new PaginationResponse<LocationDto>()
         {
-            Locations = locations,
+            Items = locations,
+            Page = command.Page,
+            PageSize = command.PageSize,
             TotalCount = totalCount
         };
     }

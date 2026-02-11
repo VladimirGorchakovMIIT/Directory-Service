@@ -61,7 +61,7 @@ public class DepartmentBaseTest : IClassFixture<DirectoryTestWebFactory>, IAsync
     {
         return await ExecuteDb(async dbContext =>
         {
-            var location = Location.Create(
+            var location = new Location(
                 new LocationId(Guid.NewGuid()),
                 name,
                 new Address(street, city, 123, 33),

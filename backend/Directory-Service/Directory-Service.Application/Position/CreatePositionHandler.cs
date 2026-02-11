@@ -80,7 +80,7 @@ public class CreatePositionHandler : IHandler<PositionCreateCommand, Guid>
 
         using var transaction = transactionScopeResult.Value;
         
-        var position = DomainPosition.Create(new PositionId(positionId), name, description, departmentsPosition);
+        var position = new DomainPosition(new PositionId(positionId), name, description, departmentsPosition);
         
         var resultCreate = await _positionRepository.Create(position, cancellationToken);
 
@@ -90,7 +90,7 @@ public class CreatePositionHandler : IHandler<PositionCreateCommand, Guid>
             transaction.Rollback();
             return resultCreate.Error.ToErrors();
         }
-        
+        await _transactionManager.SaveChangesAsync();
         var commitResult = transaction.Commit();
         if (commitResult.IsFailure)
         {
@@ -99,7 +99,7 @@ public class CreatePositionHandler : IHandler<PositionCreateCommand, Guid>
             return commitResult.Error.ToErrors();
         }
         
-        await _transactionManager.SaveChangesAsync();
+        
         
         return positionId;
     }

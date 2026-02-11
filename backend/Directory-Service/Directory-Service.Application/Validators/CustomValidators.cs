@@ -21,6 +21,12 @@ public static class CustomValidators
         });
     }
 
+    public static IRuleBuilderOptionsConditions<T, TProperty> MustBeValueObject<T, TProperty>(
+        this IRuleBuilder<T, TProperty> ruleBuilder, Action<TProperty, ValidationContext<T>> validate)
+    {
+        return ruleBuilder.Custom(validate);
+    }
+    
     public static IRuleBuilderOptionsConditions<T, IEnumerable<TProperty>> HasDuplicates<T, TProperty>(this IRuleBuilderOptions<T, IEnumerable<TProperty>> ruleBuilder)
     {
         return ruleBuilder.Custom((collections, context) =>

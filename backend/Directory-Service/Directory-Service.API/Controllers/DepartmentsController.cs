@@ -1,4 +1,6 @@
 ﻿using Directory_Service.Application.Department;
+using Directory_Service.Application.Department.Queries;
+using Directory_Service.Contracts.Department;
 using Directory_Service.Core.Endpoints;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +40,15 @@ public class DepartmentsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new ChangeDepartmentCommand(parentId, departmentId);
+        return await handler.Handle(command, cancellationToken);
+    }
+    
+    [HttpGet("/top-positions")]
+    public async Task<EndpointResult<IEnumerable<DepartmentLargestNumberDto>>> GetLargestNumberPosition(
+        [FromQuery] GetLargestNumberCommand command,
+        [FromServices] GetLargestNumberHandler handler,
+        CancellationToken cancellationToken)
+    {
         return await handler.Handle(command, cancellationToken);
     }
     
